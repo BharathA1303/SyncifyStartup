@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+.venv/
+*.egg-info/
+dist/
+build/
+
+# Environment
+.env
+.env.local
+.env.production
+*.pem
+serviceAccountKey.json
+
+# Database
+*.sqlite
+*.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Logs
+*.log
+logs/
+
+# Node (for frontend tooling later)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Firebase
+.firebase/
+firebase-debug.log
+
+# Uploads (local dev only)
+uploads/
+temp/
