@@ -10,6 +10,9 @@ from flask import Flask, jsonify
 from config.settings import get_config
 from extensions import db, socketio, limiter, cors, migrate, init_redis
 
+# Import all models so SQLAlchemy registers them
+import models  # noqa: F401
+
 # Import all Socket event handlers
 import socket_events  # noqa: F401
 
