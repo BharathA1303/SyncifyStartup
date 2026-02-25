@@ -3,706 +3,1068 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Syncify — Listen together. Bond deeper. The real-time music platform that connects souls through sound." />
+  <meta name="description" content="Syncify — Real-time music bonding. Sync listen with zero delay. Build streaks. Let AI measure your soul compatibility." />
   <title>Syncify — Music That Bonds</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../styles/design-system.css" />
-  <style>
 
-    /* ── NAV ───────────────────────────────────────── */
-    .nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      padding: var(--space-4) 0;
-      transition: background var(--transition-base), backdrop-filter var(--transition-base);
+  <style>
+    /* ═══════════════════════════════════════════════
+       DESIGN TOKENS
+    ═══════════════════════════════════════════════ */
+    :root {
+      --brand-purple: #7f5af0;
+      --brand-green:  #2cb67d;
+      --brand-pink:   #e53170;
+      --brand-gold:   #ffd700;
+
+      --gradient-brand: linear-gradient(135deg, #7f5af0 0%, #2cb67d 100%);
+      --gradient-warm:  linear-gradient(135deg, #e53170, #7f5af0);
+      --gradient-gold:  linear-gradient(135deg, #ffd700, #fb5607);
+
+      --bg-base:    #080810;
+      --bg-surface: #0e0e1a;
+      --bg-raised:  #14141f;
+      --bg-overlay: #1a1a2a;
+      --bg-card:    rgba(255,255,255,0.03);
+
+      --text-primary:   #f0eeff;
+      --text-secondary: #8892a4;
+      --text-muted:     #4a5568;
+
+      --border-subtle: rgba(255,255,255,0.05);
+      --border-low:    rgba(255,255,255,0.08);
+      --border-mid:    rgba(255,255,255,0.12);
+      --border-accent: rgba(127,90,240,0.35);
+
+      --glass-bg: rgba(255,255,255,0.03);
+
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 22px;
+      --radius-xl: 32px;
+      --radius-full: 9999px;
+
+      /* clamp() typography — ALL sizes */
+      --t-xs:   clamp(0.6rem,  1.1vw, 0.7rem);
+      --t-sm:   clamp(0.75rem, 1.4vw, 0.85rem);
+      --t-base: clamp(0.9rem,  1.7vw, 1rem);
+      --t-md:   clamp(1rem,    2vw,   1.15rem);
+      --t-lg:   clamp(1.1rem,  2.5vw, 1.3rem);
+      --t-xl:   clamp(1.3rem,  3vw,   1.6rem);
+      --t-2xl:  clamp(1.6rem,  4vw,   2.2rem);
+      --t-3xl:  clamp(2rem,    5vw,   3rem);
+      --t-4xl:  clamp(2.5rem,  6.5vw, 4.2rem);
+      --t-5xl:  clamp(3.2rem,  8.5vw, 6rem);
+      --t-hero: clamp(4rem,    11vw,  8.5rem);
+
+      /* clamp() spacing */
+      --s-1: clamp(0.25rem, 0.5vw,  0.5rem);
+      --s-2: clamp(0.5rem,  1vw,    0.75rem);
+      --s-3: clamp(0.75rem, 1.5vw,  1rem);
+      --s-4: clamp(1rem,    2vw,    1.5rem);
+      --s-5: clamp(1.25rem, 2.5vw,  1.75rem);
+      --s-6: clamp(1.5rem,  3vw,    2.5rem);
+      --s-8: clamp(2rem,    4vw,    3.5rem);
+      --s-10:clamp(2.5rem,  5vw,    4.5rem);
+      --s-12:clamp(3rem,    6vw,    6rem);
+      --s-20:clamp(5rem,    10vw,   10rem);
+
+      --nav-h: 72px;
+      --ease: cubic-bezier(0.4,0,0.2,1);
+      --bounce: cubic-bezier(0.34,1.56,0.64,1);
+
+      --font-display: 'Syne', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
     }
-    .nav.scrolled {
-      background: rgba(10,10,15,0.85);
-      backdrop-filter: blur(24px);
-      border-bottom: 1px solid var(--border-subtle);
+
+    /* ═══════════════════════════════════════════════
+       RESET
+    ═══════════════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      font-size: var(--t-base);
+      color: var(--text-primary);
+      background: var(--bg-base);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+      line-height: 1.65;
     }
-    .nav-inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+    a { color: inherit; text-decoration: none; }
+    button { font-family: var(--font-body); cursor: pointer; border: none; background: none; }
+    img { max-width: 100%; display: block; }
+
+    .container {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 0 var(--space-6);
+      padding: 0 var(--s-6);
     }
-    .nav-logo {
-      font-family: var(--font-display);
-      font-size: var(--text-xl);
-      font-weight: 800;
+
+    /* ═══════════════════════════════════════════════
+       NOISE TEXTURE OVERLAY
+    ═══════════════════════════════════════════════ */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.025;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ═══════════════════════════════════════════════
+       BUTTONS
+    ═══════════════════════════════════════════════ */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--s-2);
+      padding: var(--s-3) var(--s-6);
+      border-radius: var(--radius-full);
+      font-size: var(--t-sm);
+      font-weight: 600;
+      font-family: var(--font-body);
+      transition: all 0.25s var(--ease);
+      cursor: pointer;
+      white-space: nowrap;
+      border: none;
+      outline: none;
+    }
+    .btn-primary {
+      background: var(--gradient-brand);
+      color: #fff;
+      box-shadow: 0 4px 24px rgba(127,90,240,0.4);
+    }
+    .btn-primary:hover {
+      box-shadow: 0 8px 40px rgba(127,90,240,0.6);
+      transform: translateY(-2px);
+    }
+    .btn-secondary {
+      background: rgba(255,255,255,0.05);
+      color: var(--text-primary);
+      border: 1px solid var(--border-mid);
+      backdrop-filter: blur(20px);
+    }
+    .btn-secondary:hover {
+      background: rgba(255,255,255,0.09);
+      border-color: rgba(127,90,240,0.4);
+    }
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-secondary);
+      padding: var(--s-2) var(--s-4);
+    }
+    .btn-ghost:hover { color: var(--text-primary); }
+    .btn-lg {
+      padding: var(--s-4) var(--s-8);
+      font-size: var(--t-md);
+      gap: var(--s-3);
+    }
+    .btn-sm {
+      padding: var(--s-2) var(--s-4);
+      font-size: var(--t-xs);
+    }
+    .btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    .gradient-text {
       background: var(--gradient-brand);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      letter-spacing: -0.03em;
+    }
+
+    /* ═══════════════════════════════════════════════
+       NAV
+    ═══════════════════════════════════════════════ */
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      height: var(--nav-h);
+      display: flex;
+      align-items: center;
+      transition: background 0.35s var(--ease), backdrop-filter 0.35s var(--ease), border-color 0.35s;
+      border-bottom: 1px solid transparent;
+    }
+    .nav.scrolled {
+      background: rgba(8,8,16,0.8);
+      backdrop-filter: blur(32px) saturate(180%);
+      border-color: var(--border-subtle);
+    }
+    .nav-inner {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 var(--s-6);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      font-family: var(--font-display);
+      font-size: var(--t-xl);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      background: var(--gradient-brand);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
     .nav-links {
       display: flex;
       align-items: center;
-      gap: var(--space-6);
+      gap: var(--s-6);
     }
     .nav-link {
-      font-size: var(--text-sm);
+      font-size: var(--t-sm);
       color: var(--text-secondary);
       font-weight: 500;
-      transition: color var(--transition-fast);
+      transition: color 0.15s;
+      position: relative;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -2px; left: 0;
+      width: 0; height: 1px;
+      background: var(--gradient-brand);
+      transition: width 0.25s var(--ease);
     }
     .nav-link:hover { color: var(--text-primary); }
-    .nav-actions { display: flex; align-items: center; gap: var(--space-3); }
+    .nav-link:hover::after { width: 100%; }
+    .nav-actions { display: flex; align-items: center; gap: var(--s-2); }
+    .nav-mobile-menu { display: none; }
 
-    /* ── HERO ─────────────────────────────────────── */
+    /* ═══════════════════════════════════════════════
+       HERO
+    ═══════════════════════════════════════════════ */
     .hero {
       min-height: 100vh;
+      padding-top: var(--nav-h);
       display: flex;
       align-items: center;
       position: relative;
       overflow: hidden;
-      padding: 120px 0 80px;
     }
 
-    /* Background orbs */
-    .hero-orb {
+    /* Ambient orbs */
+    .orb {
       position: absolute;
       border-radius: 50%;
-      filter: blur(80px);
       pointer-events: none;
+      filter: blur(100px);
     }
     .orb-1 {
-      width: clamp(300px, 50vw, 600px);
-      height: clamp(300px, 50vw, 600px);
-      background: rgba(127,90,240,0.18);
-      top: -10%;
-      right: -10%;
-      animation: float 8s ease-in-out infinite;
+      width: clamp(400px,60vw,800px);
+      height: clamp(400px,60vw,800px);
+      background: radial-gradient(circle, rgba(127,90,240,0.22) 0%, transparent 70%);
+      top: -20%; right: -20%;
+      animation: driftA 12s ease-in-out infinite;
     }
     .orb-2 {
-      width: clamp(200px, 35vw, 400px);
-      height: clamp(200px, 35vw, 400px);
-      background: rgba(44,182,125,0.12);
-      bottom: 10%;
-      left: -5%;
-      animation: float 10s ease-in-out infinite reverse;
+      width: clamp(300px,45vw,600px);
+      height: clamp(300px,45vw,600px);
+      background: radial-gradient(circle, rgba(44,182,125,0.15) 0%, transparent 70%);
+      bottom: -10%; left: -15%;
+      animation: driftB 15s ease-in-out infinite;
     }
     .orb-3 {
-      width: clamp(150px, 25vw, 300px);
-      height: clamp(150px, 25vw, 300px);
-      background: rgba(229,49,112,0.1);
-      top: 40%;
-      left: 40%;
-      animation: float 12s ease-in-out infinite;
+      width: clamp(200px,30vw,400px);
+      height: clamp(200px,30vw,400px);
+      background: radial-gradient(circle, rgba(229,49,112,0.12) 0%, transparent 70%);
+      top: 45%; left: 42%;
+      animation: driftA 18s ease-in-out infinite reverse;
+    }
+
+    @keyframes driftA {
+      0%,100% { transform: translate(0,0) scale(1); }
+      33%      { transform: translate(-4%,3%) scale(1.05); }
+      66%      { transform: translate(3%,-4%) scale(0.97); }
+    }
+    @keyframes driftB {
+      0%,100% { transform: translate(0,0) scale(1); }
+      50%      { transform: translate(5%,-5%) scale(1.08); }
     }
 
     /* Grid texture */
-    .hero::before {
-      content: '';
+    .hero-grid {
       position: absolute;
       inset: 0;
       background-image:
-        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
-      background-size: 60px 60px;
-      pointer-events: none;
+        linear-gradient(rgba(127,90,240,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(127,90,240,0.04) 1px, transparent 1px);
+      background-size: 72px 72px;
+      mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 30%, transparent 100%);
     }
 
-    .hero-content {
+    .hero-inner {
       position: relative;
       z-index: 2;
+      width: 100%;
       max-width: 1200px;
       margin: 0 auto;
-      padding: 0 var(--space-6);
+      padding: var(--s-12) var(--s-6);
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: var(--space-12);
+      gap: var(--s-10);
       align-items: center;
     }
 
+    /* Hero left */
     .hero-eyebrow {
       display: inline-flex;
       align-items: center;
-      gap: var(--space-2);
-      background: rgba(127,90,240,0.12);
-      border: 1px solid rgba(127,90,240,0.25);
+      gap: var(--s-2);
+      background: rgba(127,90,240,0.1);
+      border: 1px solid rgba(127,90,240,0.22);
       border-radius: var(--radius-full);
       padding: 6px 16px;
-      font-size: var(--text-xs);
-      font-weight: 600;
-      color: #a78bfa;
-      letter-spacing: 0.05em;
+      font-size: var(--t-xs);
+      font-weight: 700;
+      color: #b59ff8;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
-      margin-bottom: var(--space-6);
+      margin-bottom: var(--s-5);
       opacity: 0;
-      animation: fadeInUp 0.6s ease 0.1s forwards;
+      animation: slideUp 0.6s var(--ease) 0.1s forwards;
     }
-
-    .hero-eyebrow-dot {
-      width: 6px; height: 6px;
+    .eyebrow-pulse {
+      width: 7px; height: 7px;
       background: var(--brand-purple);
       border-radius: 50%;
-      animation: pulse-glow 2s ease-in-out infinite;
+      animation: pulseRing 2s ease-in-out infinite;
+    }
+    @keyframes pulseRing {
+      0%,100% { box-shadow: 0 0 0 0 rgba(127,90,240,0.5); }
+      50%      { box-shadow: 0 0 0 5px rgba(127,90,240,0); }
     }
 
     .hero-title {
-      font-size: var(--text-hero);
+      font-family: var(--font-display);
+      font-size: var(--t-hero);
       font-weight: 800;
-      line-height: 1.0;
-      letter-spacing: -0.04em;
-      margin-bottom: var(--space-6);
+      line-height: 0.95;
+      letter-spacing: -0.05em;
+      margin-bottom: var(--s-5);
       opacity: 0;
-      animation: fadeInUp 0.7s ease 0.2s forwards;
+      animation: slideUp 0.7s var(--ease) 0.2s forwards;
     }
-
-    .hero-title .line-2 {
+    .hero-title .line-accent {
       background: var(--gradient-brand);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
 
-    .hero-subtitle {
-      font-size: var(--text-lg);
+    .hero-sub {
+      font-size: var(--t-lg);
       color: var(--text-secondary);
       font-weight: 300;
-      line-height: 1.7;
-      max-width: 480px;
-      margin-bottom: var(--space-8);
+      line-height: 1.75;
+      max-width: 460px;
+      margin-bottom: var(--s-8);
       opacity: 0;
-      animation: fadeInUp 0.7s ease 0.35s forwards;
+      animation: slideUp 0.7s var(--ease) 0.35s forwards;
     }
 
     .hero-actions {
       display: flex;
       align-items: center;
-      gap: var(--space-4);
+      gap: var(--s-3);
       flex-wrap: wrap;
+      margin-bottom: var(--s-10);
       opacity: 0;
-      animation: fadeInUp 0.7s ease 0.5s forwards;
+      animation: slideUp 0.7s var(--ease) 0.5s forwards;
     }
 
-    .hero-stats {
+    .hero-social-proof {
       display: flex;
-      gap: var(--space-8);
-      margin-top: var(--space-12);
+      align-items: center;
+      gap: var(--s-4);
       opacity: 0;
-      animation: fadeInUp 0.7s ease 0.65s forwards;
+      animation: slideUp 0.7s var(--ease) 0.65s forwards;
     }
-
-    .stat-item { }
-    .stat-number {
-      font-family: var(--font-display);
-      font-size: var(--text-2xl);
-      font-weight: 800;
-      background: var(--gradient-brand);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+    .sp-avatars {
+      display: flex;
     }
-    .stat-label {
-      font-size: var(--text-xs);
-      color: var(--text-muted);
-      font-weight: 500;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      margin-top: 2px;
-    }
-
-    /* ── HERO VISUAL ─────────────────────────────── */
-    .hero-visual {
-      position: relative;
+    .sp-av {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      border: 2px solid var(--bg-base);
+      margin-left: -10px;
+      font-size: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
-      opacity: 0;
-      animation: scaleIn 0.8s ease 0.4s forwards;
+      font-weight: 700;
+    }
+    .sp-av:first-child { margin-left: 0; }
+    .sp-av-1 { background: linear-gradient(135deg,#7f5af0,#2cb67d); }
+    .sp-av-2 { background: linear-gradient(135deg,#e53170,#7f5af0); }
+    .sp-av-3 { background: linear-gradient(135deg,#ffbe0b,#e53170); }
+    .sp-av-4 { background: linear-gradient(135deg,#3a86ff,#7f5af0); }
+    .sp-text { font-size: var(--t-xs); color: var(--text-secondary); line-height: 1.5; }
+    .sp-text strong { color: var(--text-primary); }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
 
-    .player-mockup {
+    /* ───── Hero Visual: Player Card ───── */
+    .hero-visual {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      animation: scaleReveal 0.9s var(--bounce) 0.4s forwards;
+    }
+    @keyframes scaleReveal {
+      from { opacity: 0; transform: scale(0.88) translateY(20px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .player-card {
       background: var(--bg-raised);
-      border: 1px solid var(--border-default);
+      border: 1px solid var(--border-low);
       border-radius: var(--radius-xl);
-      padding: var(--space-6);
+      padding: var(--s-5);
       width: 100%;
-      max-width: 380px;
-      box-shadow: var(--shadow-lg), var(--shadow-glow);
+      max-width: 360px;
+      box-shadow:
+        0 0 0 1px rgba(127,90,240,0.08),
+        0 32px 80px rgba(0,0,0,0.6),
+        0 0 60px rgba(127,90,240,0.15);
       position: relative;
       z-index: 2;
     }
 
-    .player-cover {
+    /* Album art */
+    .album-art {
       width: 100%;
       aspect-ratio: 1;
       border-radius: var(--radius-lg);
-      background: var(--gradient-brand);
+      background: linear-gradient(135deg, #0d0221 0%, #1a0533 40%, #7f5af0 100%);
       position: relative;
       overflow: hidden;
-      margin-bottom: var(--space-4);
+      margin-bottom: var(--s-4);
     }
-
-    .player-cover-inner {
+    .vinyl-wrap {
       position: absolute;
       inset: 0;
       display: flex;
       align-items: center;
       justify-content: center;
     }
-
-    .vinyl {
-      width: 60%;
-      height: 60%;
+    .vinyl-disc {
+      width: 62%;
+      height: 62%;
       border-radius: 50%;
       background: conic-gradient(
-        #1a1a2e 0deg, #16213e 45deg, #0f3460 90deg, #533483 135deg,
-        #1a1a2e 180deg, #16213e 225deg, #0f3460 270deg, #533483 315deg, #1a1a2e 360deg
+        #0a0a14 0deg, #1a1a30 30deg, #0d0220 60deg, #533483 90deg,
+        #0a0a14 120deg, #1a1a30 150deg, #0d0220 180deg, #533483 210deg,
+        #0a0a14 240deg, #1a1a30 270deg, #0d0220 300deg, #533483 330deg, #0a0a14 360deg
       );
-      animation: spin 8s linear infinite;
-      box-shadow: 0 0 40px rgba(0,0,0,0.5);
+      animation: spin 9s linear infinite;
       position: relative;
+      box-shadow: 0 0 50px rgba(127,90,240,0.5), 0 0 100px rgba(127,90,240,0.2);
     }
-
-    .vinyl::after {
+    .vinyl-disc::after {
       content: '';
       position: absolute;
       top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      width: 20%;
-      height: 20%;
-      background: var(--bg-base);
+      transform: translate(-50%,-50%);
+      width: 22%; height: 22%;
+      background: var(--bg-raised);
       border-radius: 50%;
+      box-shadow: 0 0 10px rgba(127,90,240,0.5);
     }
-
-    /* Floating reaction bubbles */
-    .reaction-bubble {
+    .album-glow {
       position: absolute;
-      background: var(--bg-overlay);
-      border: 1px solid var(--border-default);
-      border-radius: var(--radius-full);
-      padding: 6px 12px;
-      font-size: var(--text-sm);
-      backdrop-filter: blur(10px);
-      animation: float 3s ease-in-out infinite;
-      white-space: nowrap;
+      inset: 0;
+      background: radial-gradient(circle at 60% 40%, rgba(127,90,240,0.3), transparent 60%);
+      mix-blend-mode: screen;
     }
 
-    .reaction-1 { top: 15%; right: -20%; animation-delay: 0s; }
-    .reaction-2 { top: 55%; right: -25%; animation-delay: 1s; }
-    .reaction-3 { bottom: 20%; left: -22%; animation-delay: 0.5s; }
-    .reaction-4 { top: 30%; left: -18%; animation-delay: 1.5s; }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    .player-info {
+    /* Track info */
+    .track-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: var(--space-4);
+      margin-bottom: var(--s-3);
     }
-    .player-song { }
-    .player-title {
+    .track-name {
       font-family: var(--font-display);
       font-weight: 700;
-      font-size: var(--text-md);
+      font-size: var(--t-md);
     }
-    .player-artist {
-      font-size: var(--text-sm);
+    .track-artist {
+      font-size: var(--t-sm);
       color: var(--text-secondary);
       margin-top: 2px;
     }
-
-    .sync-badge {
+    .sync-pill {
       display: flex;
       align-items: center;
       gap: 6px;
-      background: rgba(44,182,125,0.15);
-      border: 1px solid rgba(44,182,125,0.3);
+      background: rgba(44,182,125,0.12);
+      border: 1px solid rgba(44,182,125,0.25);
       border-radius: var(--radius-full);
-      padding: 4px 12px;
-      font-size: var(--text-xs);
-      color: var(--brand-green);
-      font-weight: 600;
+      padding: 5px 12px;
+      font-size: var(--t-xs);
+      color: #3de8a0;
+      font-weight: 700;
+      white-space: nowrap;
     }
-
     .sync-dot {
       width: 6px; height: 6px;
       background: var(--brand-green);
       border-radius: 50%;
-      animation: pulse-glow 1.5s ease-in-out infinite;
+      animation: blink 1.4s ease-in-out infinite;
     }
+    @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
 
+    /* Waveform */
     .waveform {
       display: flex;
       align-items: center;
       gap: 3px;
-      height: 32px;
-      margin-bottom: var(--space-3);
+      height: 36px;
+      margin-bottom: var(--s-3);
     }
-
     .wave-bar {
       flex: 1;
-      background: var(--border-default);
-      border-radius: 2px;
-      animation: wave 1.2s ease-in-out infinite;
+      background: var(--border-low);
+      border-radius: 3px;
+      transition: height 0.2s;
+      animation: waveAnim 1.3s ease-in-out infinite;
     }
-    .wave-bar.active { background: var(--gradient-brand); }
-    .wave-bar:nth-child(1)  { animation-delay: 0.0s; height: 40%; }
-    .wave-bar:nth-child(2)  { animation-delay: 0.1s; height: 70%; }
-    .wave-bar:nth-child(3)  { animation-delay: 0.2s; height: 55%; }
-    .wave-bar:nth-child(4)  { animation-delay: 0.3s; height: 90%; }
-    .wave-bar:nth-child(5)  { animation-delay: 0.4s; height: 60%; }
-    .wave-bar:nth-child(6)  { animation-delay: 0.5s; height: 80%; }
-    .wave-bar:nth-child(7)  { animation-delay: 0.6s; height: 45%; }
-    .wave-bar:nth-child(8)  { animation-delay: 0.7s; height: 95%; }
-    .wave-bar:nth-child(9)  { animation-delay: 0.8s; height: 65%; }
-    .wave-bar:nth-child(10) { animation-delay: 0.9s; height: 75%; }
-    .wave-bar:nth-child(11) { animation-delay: 1.0s; height: 50%; }
-    .wave-bar:nth-child(12) { animation-delay: 1.1s; height: 85%; }
-    .wave-bar:nth-child(1),.wave-bar:nth-child(2),.wave-bar:nth-child(3),
-    .wave-bar:nth-child(4),.wave-bar:nth-child(5),.wave-bar:nth-child(6) { background: var(--gradient-brand); }
+    .wave-bar.played { background: var(--gradient-brand); }
+    .wave-bar:nth-child(1)  { height: 35%; animation-delay: 0.00s; }
+    .wave-bar:nth-child(2)  { height: 65%; animation-delay: 0.08s; }
+    .wave-bar:nth-child(3)  { height: 50%; animation-delay: 0.16s; }
+    .wave-bar:nth-child(4)  { height: 85%; animation-delay: 0.24s; }
+    .wave-bar:nth-child(5)  { height: 55%; animation-delay: 0.32s; }
+    .wave-bar:nth-child(6)  { height: 75%; animation-delay: 0.40s; }
+    .wave-bar:nth-child(7)  { height: 40%; animation-delay: 0.48s; }
+    .wave-bar:nth-child(8)  { height: 90%; animation-delay: 0.56s; }
+    .wave-bar:nth-child(9)  { height: 60%; animation-delay: 0.64s; }
+    .wave-bar:nth-child(10) { height: 70%; animation-delay: 0.72s; }
+    .wave-bar:nth-child(11) { height: 45%; animation-delay: 0.80s; }
+    .wave-bar:nth-child(12) { height: 80%; animation-delay: 0.88s; }
+    .wave-bar:nth-child(13) { height: 38%; animation-delay: 0.96s; }
+    .wave-bar:nth-child(14) { height: 62%; animation-delay: 1.04s; }
+    .wave-bar:nth-child(15) { height: 52%; animation-delay: 1.12s; }
+    @keyframes waveAnim {
+      0%,100% { transform: scaleY(0.55); }
+      50%      { transform: scaleY(1); }
+    }
 
+    /* Progress bar */
+    .progress-track {
+      height: 3px;
+      background: var(--border-low);
+      border-radius: 3px;
+      margin-bottom: var(--s-2);
+      position: relative;
+      cursor: pointer;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 42%;
+      background: var(--gradient-brand);
+      border-radius: 3px;
+      position: relative;
+    }
+    .progress-fill::after {
+      content: '';
+      position: absolute;
+      right: -4px; top: -3px;
+      width: 9px; height: 9px;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 0 0 8px rgba(127,90,240,0.8);
+    }
+    .progress-times {
+      display: flex;
+      justify-content: space-between;
+      font-size: var(--t-xs);
+      color: var(--text-muted);
+      margin-bottom: var(--s-4);
+    }
+
+    /* Controls */
     .player-controls {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: var(--space-4);
+      gap: var(--s-4);
+      margin-bottom: var(--s-4);
     }
-
-    .ctrl-btn {
-      background: transparent;
+    .ctrl {
+      background: none;
       border: none;
       color: var(--text-secondary);
       cursor: pointer;
-      transition: color var(--transition-fast), transform var(--transition-fast);
-      font-size: 20px;
       display: flex;
       align-items: center;
+      font-size: 20px;
+      transition: color 0.15s, transform 0.15s;
     }
-    .ctrl-btn:hover { color: var(--text-primary); transform: scale(1.1); }
-
-    .ctrl-btn-main {
+    .ctrl:hover { color: var(--text-primary); transform: scale(1.12); }
+    .ctrl-main {
       width: 52px; height: 52px;
-      border-radius: 50%;
       background: var(--gradient-brand);
+      border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: white;
       font-size: 22px;
-      box-shadow: 0 4px 20px rgba(127,90,240,0.4);
+      box-shadow: 0 4px 24px rgba(127,90,240,0.5);
       cursor: pointer;
       border: none;
-      transition: transform var(--transition-bounce), box-shadow var(--transition-base);
+      transition: transform 0.2s var(--bounce), box-shadow 0.2s;
     }
-    .ctrl-btn-main:hover {
-      transform: scale(1.08);
-      box-shadow: 0 8px 30px rgba(127,90,240,0.6);
+    .ctrl-main:hover {
+      transform: scale(1.1);
+      box-shadow: 0 8px 40px rgba(127,90,240,0.7);
     }
 
-    /* Users synced indicator */
-    .synced-users {
+    /* Synced users */
+    .synced-bar {
       display: flex;
       align-items: center;
-      gap: var(--space-2);
-      margin-top: var(--space-4);
-      padding-top: var(--space-4);
+      justify-content: space-between;
+      padding-top: var(--s-3);
       border-top: 1px solid var(--border-subtle);
     }
-    .synced-avatars { display: flex; }
-    .synced-avatar {
-      width: 28px; height: 28px;
+    .synced-left {
+      display: flex;
+      align-items: center;
+      gap: var(--s-2);
+    }
+    .synced-avs {
+      display: flex;
+    }
+    .synced-av {
+      width: 26px; height: 26px;
       border-radius: 50%;
       border: 2px solid var(--bg-raised);
       margin-left: -8px;
-      font-size: 12px;
+      font-size: 11px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 700;
     }
-    .synced-avatar:first-child { margin-left: 0; }
-    .av1 { background: linear-gradient(135deg, #7f5af0, #2cb67d); }
-    .av2 { background: linear-gradient(135deg, #e53170, #7f5af0); }
-    .synced-text { font-size: var(--text-xs); color: var(--text-secondary); }
-    .synced-text strong { color: var(--brand-green); }
-
-    /* ── FEATURES ────────────────────────────────── */
-    .features {
-      padding: var(--space-24) 0;
-      position: relative;
+    .synced-av:first-child { margin-left: 0; }
+    .sav1 { background: linear-gradient(135deg,#7f5af0,#2cb67d); }
+    .sav2 { background: linear-gradient(135deg,#e53170,#7f5af0); }
+    .synced-txt { font-size: var(--t-xs); color: var(--text-secondary); }
+    .synced-txt strong { color: var(--brand-green); }
+    .quality-pill {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: var(--t-xs);
+      color: var(--text-muted);
+    }
+    .quality-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--brand-green);
+      animation: blink 2s ease-in-out infinite;
     }
 
-    .section-label {
-      display: inline-block;
-      font-size: var(--text-xs);
+    /* Floating bubbles */
+    .float-bubble {
+      position: absolute;
+      background: rgba(14,14,26,0.85);
+      border: 1px solid var(--border-low);
+      border-radius: var(--radius-full);
+      padding: 8px 14px;
+      font-size: var(--t-xs);
+      font-weight: 500;
+      backdrop-filter: blur(20px);
+      white-space: nowrap;
+      z-index: 3;
+      animation: floatBubble 4s ease-in-out infinite;
+      color: var(--text-primary);
+    }
+    .fb-1 { top: 12%; right: -24%; animation-delay: 0s; }
+    .fb-2 { top: 52%; right: -26%; animation-delay: 1.2s; }
+    .fb-3 { bottom: 18%; left: -24%; animation-delay: 0.6s; }
+    .fb-4 { top: 28%; left: -20%; animation-delay: 1.8s; }
+    @keyframes floatBubble {
+      0%,100% { transform: translateY(0px); }
+      50%      { transform: translateY(-10px); }
+    }
+
+    /* ═══════════════════════════════════════════════
+       MARQUEE STRIP
+    ═══════════════════════════════════════════════ */
+    .marquee-strip {
+      width: 100%;
+      overflow: hidden;
+      background: rgba(127,90,240,0.06);
+      border-top: 1px solid var(--border-subtle);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: var(--s-3) 0;
+      position: relative;
+    }
+    .marquee-strip::before,
+    .marquee-strip::after {
+      content: '';
+      position: absolute;
+      top: 0; bottom: 0;
+      width: 120px;
+      z-index: 1;
+    }
+    .marquee-strip::before {
+      left: 0;
+      background: linear-gradient(to right, var(--bg-base), transparent);
+    }
+    .marquee-strip::after {
+      right: 0;
+      background: linear-gradient(to left, var(--bg-base), transparent);
+    }
+    .marquee-track {
+      display: flex;
+      gap: var(--s-8);
+      animation: marquee 30s linear infinite;
+      width: max-content;
+    }
+    .marquee-item {
+      display: flex;
+      align-items: center;
+      gap: var(--s-2);
+      font-size: var(--t-sm);
+      color: var(--text-muted);
+      font-weight: 500;
+      flex-shrink: 0;
+    }
+    .marquee-dot { width: 5px; height: 5px; background: var(--brand-purple); border-radius: 50%; }
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* ═══════════════════════════════════════════════
+       SECTION COMMONS
+    ═══════════════════════════════════════════════ */
+    .section-eyebrow {
+      font-size: var(--t-xs);
       font-weight: 700;
       letter-spacing: 0.12em;
       text-transform: uppercase;
       color: var(--brand-purple);
-      margin-bottom: var(--space-4);
+      margin-bottom: var(--s-3);
     }
-
     .section-title {
-      font-size: var(--text-4xl);
+      font-family: var(--font-display);
+      font-size: var(--t-4xl);
       font-weight: 800;
-      letter-spacing: -0.03em;
-      line-height: 1.1;
-      margin-bottom: var(--space-4);
+      letter-spacing: -0.04em;
+      line-height: 1.05;
+      margin-bottom: var(--s-4);
     }
-
-    .section-subtitle {
-      font-size: var(--text-lg);
+    .section-sub {
+      font-size: var(--t-lg);
       color: var(--text-secondary);
       font-weight: 300;
-      max-width: 560px;
+      max-width: 540px;
+      line-height: 1.75;
     }
+    .section-header { margin-bottom: var(--s-10); }
+    .section-header.center { text-align: center; }
+    .section-header.center .section-sub { margin: 0 auto; }
 
-    .section-header {
-      text-align: center;
-      margin-bottom: var(--space-12);
-    }
-    .section-header .section-subtitle { margin: 0 auto; }
+    /* ═══════════════════════════════════════════════
+       FEATURES SECTION
+    ═══════════════════════════════════════════════ */
+    .features-section { padding: var(--s-20) 0; }
 
     .features-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: var(--space-4);
+      gap: var(--s-4);
     }
 
-    .feature-card {
+    .feat-card {
       background: var(--glass-bg);
-      border: 1px solid var(--glass-border);
-      border-radius: var(--radius-xl);
-      padding: var(--space-8);
-      transition: all var(--transition-base);
+      border: 1px solid var(--border-low);
+      border-radius: var(--radius-lg);
+      padding: var(--s-6);
+      transition: all 0.3s var(--ease);
       position: relative;
       overflow: hidden;
+      cursor: default;
     }
-
-    .feature-card::before {
+    .feat-card::before {
       content: '';
       position: absolute;
       top: 0; left: 0; right: 0;
       height: 1px;
       background: var(--gradient-brand);
       opacity: 0;
-      transition: opacity var(--transition-base);
+      transition: opacity 0.3s;
     }
-
-    .feature-card:hover {
+    .feat-card:hover {
       border-color: var(--border-accent);
-      transform: translateY(-4px);
-      box-shadow: var(--shadow-glow);
+      transform: translateY(-6px);
+      box-shadow: 0 24px 60px rgba(127,90,240,0.18);
+      background: rgba(127,90,240,0.04);
     }
+    .feat-card:hover::before { opacity: 1; }
+    .feat-card.wide { grid-column: span 2; }
 
-    .feature-card:hover::before { opacity: 1; }
-
-    .feature-card.featured {
-      grid-column: span 2;
-      background: linear-gradient(135deg,
-        rgba(127,90,240,0.08),
-        rgba(44,182,125,0.05)
-      );
-      border-color: rgba(127,90,240,0.2);
-    }
-
-    .feature-icon {
-      width: 52px; height: 52px;
+    .feat-icon {
+      width: 50px; height: 50px;
       border-radius: var(--radius-md);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 24px;
-      margin-bottom: var(--space-6);
+      font-size: 22px;
+      margin-bottom: var(--s-5);
     }
+    .fi-purple { background: rgba(127,90,240,0.18); }
+    .fi-green  { background: rgba(44,182,125,0.18); }
+    .fi-pink   { background: rgba(229,49,112,0.18); }
+    .fi-gold   { background: rgba(255,215,0,0.18); }
+    .fi-blue   { background: rgba(58,134,255,0.18); }
 
-    .icon-purple { background: rgba(127,90,240,0.2); }
-    .icon-green  { background: rgba(44,182,125,0.2); }
-    .icon-pink   { background: rgba(229,49,112,0.2); }
-    .icon-gold   { background: rgba(255,215,0,0.2); }
-    .icon-blue   { background: rgba(58,134,255,0.2); }
-
-    .feature-title {
-      font-size: var(--text-xl);
+    .feat-title {
+      font-family: var(--font-display);
+      font-size: var(--t-xl);
       font-weight: 700;
-      margin-bottom: var(--space-3);
+      margin-bottom: var(--s-3);
     }
-
-    .feature-desc {
+    .feat-desc {
       color: var(--text-secondary);
-      font-size: var(--text-sm);
-      line-height: 1.7;
+      font-size: var(--t-sm);
+      line-height: 1.75;
     }
 
-    /* ── MOOD ROOMS ──────────────────────────────── */
-    .mood-rooms {
-      padding: var(--space-24) 0;
+    /* ═══════════════════════════════════════════════
+       HOW IT WORKS
+    ═══════════════════════════════════════════════ */
+    .how-section {
+      padding: var(--s-20) 0;
       background: var(--bg-surface);
       position: relative;
       overflow: hidden;
     }
-
-    .mood-rooms::before {
+    .how-section::before {
       content: '';
       position: absolute;
       top: -200px; left: 50%;
       transform: translateX(-50%);
-      width: 800px; height: 400px;
-      background: radial-gradient(ellipse, rgba(127,90,240,0.08), transparent 70%);
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(127,90,240,0.07), transparent 70%);
       pointer-events: none;
     }
+
+    .how-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--s-4);
+      position: relative;
+    }
+    .how-steps::before {
+      content: '';
+      position: absolute;
+      top: 28px;
+      left: calc(12.5% + 20px);
+      right: calc(12.5% + 20px);
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border-mid) 20%, var(--border-mid) 80%, transparent);
+    }
+
+    .step-card {
+      text-align: center;
+      position: relative;
+    }
+    .step-num {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: var(--bg-raised);
+      border: 1px solid var(--border-mid);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-size: var(--t-lg);
+      font-weight: 800;
+      background: var(--gradient-brand);
+      color: #fff;
+      margin: 0 auto var(--s-4);
+      box-shadow: 0 4px 20px rgba(127,90,240,0.35);
+      position: relative;
+      z-index: 1;
+    }
+    .step-title {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: var(--t-md);
+      margin-bottom: var(--s-2);
+    }
+    .step-desc { color: var(--text-secondary); font-size: var(--t-sm); line-height: 1.7; }
+
+    /* ═══════════════════════════════════════════════
+       MOOD ROOMS
+    ═══════════════════════════════════════════════ */
+    .rooms-section { padding: var(--s-20) 0; }
 
     .rooms-grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
-      gap: var(--space-4);
-      margin-top: var(--space-12);
+      gap: var(--s-3);
     }
 
     .room-card {
-      border-radius: var(--radius-xl);
-      padding: var(--space-6);
-      position: relative;
-      overflow: hidden;
-      cursor: pointer;
-      transition: all var(--transition-base);
-      aspect-ratio: 3/4;
+      border-radius: var(--radius-lg);
+      padding: var(--s-5);
+      aspect-ratio: 3/4.2;
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
-      border: 1px solid rgba(255,255,255,0.08);
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      border: 1px solid rgba(255,255,255,0.06);
+      transition: transform 0.3s var(--ease), box-shadow 0.3s;
     }
-
-    .room-card:hover { transform: scale(1.03); }
-
+    .room-card:hover { transform: scale(1.04) translateY(-4px); }
     .room-card::before {
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 60%);
-    }
-
-    .room-chill  { background: linear-gradient(135deg, #134e4a, #065f46, #2cb67d); }
-    .room-study  { background: linear-gradient(135deg, #1e3a5f, #1d4ed8, #3a86ff); }
-    .room-gym    { background: linear-gradient(135deg, #7c0a02, #c0392b, #ff006e); }
-    .room-party  { background: linear-gradient(135deg, #713f12, #b45309, #ffbe0b); }
-    .room-night  { background: linear-gradient(135deg, #0d0221, #1a0533, #7f5af0); }
-
-    .room-emoji  {
-      position: absolute;
-      top: var(--space-4); left: var(--space-4);
-      font-size: clamp(2rem, 4vw, 3rem);
+      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.1) 60%, transparent 100%);
       z-index: 1;
     }
+    .room-chill  { background: linear-gradient(160deg, #082a20 0%, #0d5c3a 50%, #1a8c5b 100%); }
+    .room-study  { background: linear-gradient(160deg, #0c1f40 0%, #1a3a7a 50%, #2855b8 100%); }
+    .room-gym    { background: linear-gradient(160deg, #2d0810 0%, #8b1a2a 50%, #cc2244 100%); }
+    .room-party  { background: linear-gradient(160deg, #2d1800 0%, #8b4500 50%, #e87800 100%); }
+    .room-night  { background: linear-gradient(160deg, #05010f 0%, #150330 50%, #3a0a7a 100%); }
 
-    .room-info { position: relative; z-index: 1; }
+    .room-emoji {
+      position: absolute;
+      top: var(--s-4); left: var(--s-4);
+      font-size: clamp(2.2rem,5vw,3.5rem);
+      z-index: 2;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.5));
+    }
+    .room-info { position: relative; z-index: 2; }
     .room-name {
       font-family: var(--font-display);
-      font-size: var(--text-lg);
+      font-size: var(--t-lg);
       font-weight: 700;
-      color: white;
+      color: #fff;
+      line-height: 1.2;
     }
-    .room-members {
-      font-size: var(--text-xs);
-      color: rgba(255,255,255,0.7);
-      margin-top: 4px;
+    .room-meta {
       display: flex;
       align-items: center;
       gap: 6px;
+      margin-top: 5px;
+      font-size: var(--t-xs);
+      color: rgba(255,255,255,0.65);
     }
-    .room-live-dot {
+    .live-dot {
       width: 6px; height: 6px;
       background: #4ade80;
       border-radius: 50%;
-      animation: pulse-glow 1.5s ease-in-out infinite;
+      animation: blink 1.5s ease-in-out infinite;
+    }
+    .room-mult {
+      margin-top: 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(255,255,255,0.12);
+      border-radius: var(--radius-full);
+      padding: 3px 10px;
+      font-size: var(--t-xs);
+      font-weight: 700;
+      color: #fff;
     }
 
-    /* ── SNAP SYSTEM ─────────────────────────────── */
-    .snap-section {
-      padding: var(--space-24) 0;
-    }
+    /* ═══════════════════════════════════════════════
+       SNAP / GAMIFICATION SECTION
+    ═══════════════════════════════════════════════ */
+    .snap-section { padding: var(--s-20) 0; background: var(--bg-surface); }
 
     .snap-layout {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: var(--space-12);
+      gap: var(--s-12);
       align-items: center;
     }
 
-    .snap-levels {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-3);
-      margin-top: var(--space-8);
-    }
-
-    .level-item {
+    .level-list { display: flex; flex-direction: column; gap: var(--s-3); margin-top: var(--s-6); }
+    .level-row {
       display: flex;
       align-items: center;
-      gap: var(--space-4);
-      padding: var(--space-4);
+      gap: var(--s-4);
+      padding: var(--s-4);
       background: var(--glass-bg);
-      border: 1px solid var(--glass-border);
-      border-radius: var(--radius-lg);
-      transition: all var(--transition-base);
-    }
-
-    .level-item:hover {
-      border-color: var(--border-default);
-      transform: translateX(8px);
-    }
-
-    .level-icon {
-      width: 44px; height: 44px;
+      border: 1px solid var(--border-low);
       border-radius: var(--radius-md);
+      transition: all 0.25s var(--ease);
+    }
+    .level-row:hover { border-color: var(--border-mid); transform: translateX(6px); }
+    .level-ico {
+      width: 44px; height: 44px;
+      border-radius: var(--radius-sm);
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 20px;
       flex-shrink: 0;
     }
-
-    .level-info { flex: 1; }
+    .level-detail { flex: 1; }
     .level-name {
       font-family: var(--font-display);
       font-weight: 700;
-      font-size: var(--text-base);
+      font-size: var(--t-base);
     }
-    .level-range {
-      font-size: var(--text-xs);
-      color: var(--text-muted);
-      margin-top: 2px;
-    }
+    .level-pts { font-size: var(--t-xs); color: var(--text-muted); margin-top: 2px; }
+    .level-arrow { color: var(--text-muted); font-size: 18px; transition: transform 0.2s; }
+    .level-row:hover .level-arrow { transform: translateX(4px); color: var(--brand-purple); }
 
-    .snap-visual {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-4);
-    }
-
-    .snap-action {
+    .snap-actions { display: flex; flex-direction: column; gap: var(--s-3); }
+    .snap-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: var(--space-4) var(--space-6);
+      padding: var(--s-4) var(--s-5);
       background: var(--glass-bg);
-      border: 1px solid var(--glass-border);
-      border-radius: var(--radius-lg);
-      transition: all var(--transition-base);
+      border: 1px solid var(--border-low);
+      border-radius: var(--radius-md);
+      transition: all 0.25s var(--ease);
+      cursor: default;
     }
-
-    .snap-action:hover {
-      border-color: rgba(127,90,240,0.3);
-      box-shadow: var(--shadow-glow);
+    .snap-row:hover {
+      border-color: rgba(127,90,240,0.25);
+      box-shadow: 0 4px 20px rgba(127,90,240,0.1);
     }
-
-    .snap-action-label {
-      font-size: var(--text-sm);
-      color: var(--text-secondary);
+    .snap-row.special {
+      border-color: rgba(127,90,240,0.2);
+      background: rgba(127,90,240,0.05);
     }
-    .snap-action-points {
+    .snap-label { font-size: var(--t-sm); color: var(--text-secondary); }
+    .snap-pts {
       font-family: var(--font-display);
-      font-size: var(--text-lg);
+      font-size: var(--t-xl);
       font-weight: 800;
       background: var(--gradient-brand);
       -webkit-background-clip: text;
@@ -710,295 +1072,407 @@
       background-clip: text;
     }
 
-    /* ── AI SECTION ──────────────────────────────── */
-    .ai-section {
-      padding: var(--space-24) 0;
-      background: var(--bg-surface);
-      position: relative;
-      overflow: hidden;
+    /* ═══════════════════════════════════════════════
+       AI SECTION
+    ═══════════════════════════════════════════════ */
+    .ai-section { padding: var(--s-20) 0; }
+
+    .ai-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--s-12);
+      align-items: center;
     }
 
-    .ai-card {
-      background: linear-gradient(135deg,
-        rgba(127,90,240,0.08) 0%,
-        rgba(44,182,125,0.05) 100%
-      );
+    .compat-card {
+      background: var(--bg-raised);
       border: 1px solid rgba(127,90,240,0.2);
       border-radius: var(--radius-xl);
-      padding: var(--space-12);
-      text-align: center;
+      padding: var(--s-8);
+      box-shadow: 0 0 60px rgba(127,90,240,0.12);
       position: relative;
       overflow: hidden;
     }
-
-    .ai-card::before {
+    .compat-card::before {
       content: '';
       position: absolute;
-      top: -100px; left: 50%;
+      top: -80px; left: 50%;
       transform: translateX(-50%);
-      width: 400px; height: 300px;
-      background: radial-gradient(ellipse, rgba(127,90,240,0.15), transparent 70%);
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(127,90,240,0.15), transparent 70%);
       pointer-events: none;
     }
 
-    .compatibility-ring {
-      width: clamp(160px, 25vw, 220px);
-      height: clamp(160px, 25vw, 220px);
-      margin: var(--space-8) auto;
+    .compat-ring-wrap {
+      width: clamp(140px,20vw,200px);
+      height: clamp(140px,20vw,200px);
+      margin: 0 auto var(--s-6);
       position: relative;
     }
-
     .ring-svg {
       width: 100%; height: 100%;
       transform: rotate(-90deg);
     }
-
-    .ring-bg { fill: none; stroke: var(--bg-raised); stroke-width: 8; }
-    .ring-fill {
+    .ring-track { fill: none; stroke: var(--bg-overlay); stroke-width: 10; }
+    .ring-progress {
       fill: none;
-      stroke: url(#ringGradient);
-      stroke-width: 8;
+      stroke: url(#ringGrad);
+      stroke-width: 10;
       stroke-linecap: round;
       stroke-dasharray: 502;
-      stroke-dashoffset: 75; /* ~85% filled */
-      transition: stroke-dashoffset 1s ease;
+      stroke-dashoffset: 75;
+      transition: stroke-dashoffset 1.5s ease;
     }
-
-    .ring-label {
+    .ring-center {
       position: absolute;
       top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
+      transform: translate(-50%,-50%);
       text-align: center;
     }
-    .ring-percent {
+    .ring-pct {
       font-family: var(--font-display);
-      font-size: var(--text-4xl);
+      font-size: var(--t-3xl);
       font-weight: 800;
       background: var(--gradient-brand);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
+      line-height: 1;
     }
-    .ring-text { font-size: var(--text-xs); color: var(--text-muted); }
+    .ring-label { font-size: var(--t-xs); color: var(--text-muted); margin-top: 4px; }
 
-    .ai-features {
+    .compat-breakdown { display: flex; flex-direction: column; gap: var(--s-3); }
+    .breakdown-item {}
+    .breakdown-head {
+      display: flex;
+      justify-content: space-between;
+      font-size: var(--t-sm);
+      margin-bottom: 6px;
+    }
+    .breakdown-bar {
+      height: 5px;
+      background: var(--bg-overlay);
+      border-radius: 5px;
+    }
+    .breakdown-fill {
+      height: 100%;
+      background: var(--gradient-brand);
+      border-radius: 5px;
+      transition: width 1.2s var(--ease);
+    }
+
+    .ai-features-list { display: flex; flex-direction: column; gap: var(--s-4); margin-top: var(--s-6); }
+    .ai-feat {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--s-4);
+      padding: var(--s-4);
+      background: var(--glass-bg);
+      border: 1px solid var(--border-low);
+      border-radius: var(--radius-md);
+      transition: all 0.25s;
+    }
+    .ai-feat:hover { border-color: var(--border-mid); }
+    .ai-feat-ico {
+      width: 40px; height: 40px;
+      border-radius: var(--radius-sm);
+      background: rgba(127,90,240,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .ai-feat-title { font-weight: 600; font-size: var(--t-base); margin-bottom: 3px; }
+    .ai-feat-desc  { font-size: var(--t-xs); color: var(--text-secondary); line-height: 1.65; }
+
+    /* ═══════════════════════════════════════════════
+       TESTIMONIALS / SOCIAL PROOF
+    ═══════════════════════════════════════════════ */
+    .proof-section { padding: var(--s-20) 0; background: var(--bg-surface); }
+
+    .proof-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: var(--space-4);
-      margin-top: var(--space-8);
+      gap: var(--s-4);
     }
-
-    .ai-feature {
-      padding: var(--space-4);
+    .proof-card {
       background: var(--glass-bg);
-      border: 1px solid var(--glass-border);
+      border: 1px solid var(--border-low);
       border-radius: var(--radius-lg);
+      padding: var(--s-6);
+      transition: all 0.25s;
     }
-    .ai-feature-emoji { font-size: var(--text-2xl); margin-bottom: var(--space-2); }
-    .ai-feature-title { font-weight: 600; font-size: var(--text-sm); }
-    .ai-feature-desc  { font-size: var(--text-xs); color: var(--text-muted); margin-top: 4px; }
+    .proof-card:hover { border-color: var(--border-accent); transform: translateY(-4px); }
+    .proof-stars { color: #fbbf24; font-size: var(--t-sm); margin-bottom: var(--s-3); letter-spacing: 2px; }
+    .proof-text  { font-size: var(--t-sm); color: var(--text-secondary); line-height: 1.75; margin-bottom: var(--s-4); font-style: italic; }
+    .proof-author { display: flex; align-items: center; gap: var(--s-3); }
+    .proof-av {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .proof-name { font-weight: 600; font-size: var(--t-sm); }
+    .proof-handle { font-size: var(--t-xs); color: var(--text-muted); }
 
-    /* ── CTA ─────────────────────────────────────── */
-    .cta {
-      padding: var(--space-24) 0;
-      text-align: center;
+    /* ═══════════════════════════════════════════════
+       CTA
+    ═══════════════════════════════════════════════ */
+    .cta-section {
+      padding: var(--s-20) 0;
       position: relative;
       overflow: hidden;
+      text-align: center;
     }
-
-    .cta::before {
+    .cta-section::before {
       content: '';
       position: absolute;
       inset: 0;
       background:
-        radial-gradient(ellipse 80% 60% at 50% 100%, rgba(127,90,240,0.12), transparent),
-        radial-gradient(ellipse 60% 40% at 20% 50%, rgba(44,182,125,0.08), transparent),
-        radial-gradient(ellipse 60% 40% at 80% 50%, rgba(229,49,112,0.06), transparent);
+        radial-gradient(ellipse 70% 60% at 50% 110%, rgba(127,90,240,0.15), transparent),
+        radial-gradient(ellipse 50% 40% at 15% 50%, rgba(44,182,125,0.08), transparent),
+        radial-gradient(ellipse 50% 40% at 85% 50%, rgba(229,49,112,0.07), transparent);
       pointer-events: none;
     }
-
-    .cta-content { position: relative; z-index: 1; }
+    .cta-inner { position: relative; z-index: 1; }
+    .cta-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--s-2);
+      background: rgba(44,182,125,0.1);
+      border: 1px solid rgba(44,182,125,0.22);
+      border-radius: var(--radius-full);
+      padding: 6px 16px;
+      font-size: var(--t-xs);
+      font-weight: 700;
+      color: #3de8a0;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: var(--s-5);
+    }
     .cta-title {
-      font-size: var(--text-5xl);
+      font-family: var(--font-display);
+      font-size: var(--t-5xl);
       font-weight: 800;
-      letter-spacing: -0.04em;
-      line-height: 1.05;
-      margin-bottom: var(--space-6);
+      letter-spacing: -0.05em;
+      line-height: 1.0;
+      margin-bottom: var(--s-5);
     }
     .cta-sub {
-      font-size: var(--text-lg);
+      font-size: var(--t-lg);
       color: var(--text-secondary);
       font-weight: 300;
-      max-width: 480px;
-      margin: 0 auto var(--space-8);
+      max-width: 440px;
+      margin: 0 auto var(--s-8);
+      line-height: 1.75;
     }
-    .cta-actions {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: var(--space-4);
-      flex-wrap: wrap;
-    }
+    .cta-actions { display: flex; align-items: center; justify-content: center; gap: var(--s-3); flex-wrap: wrap; }
+    .cta-note { font-size: var(--t-xs); color: var(--text-muted); margin-top: var(--s-4); }
 
-    /* ── FOOTER ──────────────────────────────────── */
+    /* ═══════════════════════════════════════════════
+       FOOTER
+    ═══════════════════════════════════════════════ */
     .footer {
-      padding: var(--space-8) 0;
       border-top: 1px solid var(--border-subtle);
+      padding: var(--s-8) 0 var(--s-5);
     }
-    .footer-inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 var(--space-6);
+    .footer-top {
+      display: grid;
+      grid-template-columns: 1.5fr repeat(3, 1fr);
+      gap: var(--s-8);
+      padding-bottom: var(--s-8);
+      border-bottom: 1px solid var(--border-subtle);
+      margin-bottom: var(--s-5);
     }
+    .footer-brand {}
     .footer-logo {
       font-family: var(--font-display);
-      font-size: var(--text-lg);
+      font-size: var(--t-xl);
       font-weight: 800;
+      letter-spacing: -0.04em;
       background: var(--gradient-brand);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
+      margin-bottom: var(--s-3);
     }
-    .footer-copy { font-size: var(--text-xs); color: var(--text-muted); }
-    .footer-links {
+    .footer-tagline { font-size: var(--t-sm); color: var(--text-muted); line-height: 1.65; max-width: 220px; }
+    .footer-col-title { font-weight: 700; font-size: var(--t-sm); margin-bottom: var(--s-4); }
+    .footer-links { display: flex; flex-direction: column; gap: var(--s-3); }
+    .footer-link { font-size: var(--t-sm); color: var(--text-muted); transition: color 0.15s; }
+    .footer-link:hover { color: var(--text-primary); }
+    .footer-bottom {
       display: flex;
-      gap: var(--space-6);
+      align-items: center;
+      justify-content: space-between;
     }
-    .footer-link {
-      font-size: var(--text-xs);
-      color: var(--text-muted);
-      transition: color var(--transition-fast);
-    }
-    .footer-link:hover { color: var(--text-secondary); }
+    .footer-copy { font-size: var(--t-xs); color: var(--text-muted); }
+    .footer-legal { display: flex; gap: var(--s-5); }
+    .footer-legal a { font-size: var(--t-xs); color: var(--text-muted); transition: color 0.15s; }
+    .footer-legal a:hover { color: var(--text-secondary); }
 
-    /* ── RESPONSIVE ──────────────────────────────── */
+    /* ═══════════════════════════════════════════════
+       UTILITIES
+    ═══════════════════════════════════════════════ */
+    .scrollbar-hide::-webkit-scrollbar { display: none; }
+    ::selection { background: rgba(127,90,240,0.3); color: var(--text-primary); }
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border-low); border-radius: 3px; }
+
+    /* ═══════════════════════════════════════════════
+       RESPONSIVE
+    ═══════════════════════════════════════════════ */
     @media (max-width: 1024px) {
-      .features-grid { grid-template-columns: repeat(2, 1fr); }
-      .feature-card.featured { grid-column: span 1; }
-      .rooms-grid { grid-template-columns: repeat(3, 1fr); }
-      .ai-features { grid-template-columns: 1fr 1fr; }
-    }
-
-    @media (max-width: 768px) {
-      .hero-content {
-        grid-template-columns: 1fr;
-        text-align: center;
-      }
-      .hero-subtitle { margin: 0 auto var(--space-8); }
+      .hero-inner { grid-template-columns: 1fr; text-align: center; gap: var(--s-8); }
+      .hero-sub { margin: 0 auto var(--s-8); }
       .hero-actions { justify-content: center; }
-      .hero-stats { justify-content: center; }
+      .hero-social-proof { justify-content: center; }
       .hero-visual { order: -1; }
-      .player-mockup { max-width: 300px; margin: 0 auto; }
-      .reaction-1, .reaction-2, .reaction-3, .reaction-4 { display: none; }
-      .features-grid { grid-template-columns: 1fr; }
-      .rooms-grid { grid-template-columns: repeat(2, 1fr); }
+      .player-card { max-width: 320px; margin: 0 auto; }
+      .fb-1,.fb-2,.fb-3,.fb-4 { display: none; }
+      .features-grid { grid-template-columns: 1fr 1fr; }
+      .feat-card.wide { grid-column: span 1; }
+      .how-steps { grid-template-columns: 1fr 1fr; }
+      .how-steps::before { display: none; }
+      .rooms-grid { grid-template-columns: repeat(3,1fr); }
       .snap-layout { grid-template-columns: 1fr; }
-      .ai-features { grid-template-columns: 1fr; }
+      .ai-layout { grid-template-columns: 1fr; }
+      .proof-grid { grid-template-columns: 1fr 1fr; }
+      .footer-top { grid-template-columns: 1fr 1fr; gap: var(--s-6); }
       .nav-links { display: none; }
-      .footer-inner { flex-direction: column; gap: var(--space-4); text-align: center; }
+      .nav-mobile-menu { display: flex; }
     }
 
+    @media (max-width: 640px) {
+      .features-grid { grid-template-columns: 1fr; }
+      .rooms-grid { grid-template-columns: 1fr 1fr; }
+      .proof-grid { grid-template-columns: 1fr; }
+      .footer-top { grid-template-columns: 1fr; }
+      .footer-bottom { flex-direction: column; gap: var(--s-3); text-align: center; }
+      .how-steps { grid-template-columns: 1fr; }
+      .cta-title { font-size: var(--t-4xl); }
+    }
   </style>
 </head>
 <body>
 
-  <!-- NAV -->
+  <!-- ╔══════════════════════════════════════════╗
+       ║  NAV                                     ║
+       ╚══════════════════════════════════════════╝ -->
   <nav class="nav" id="mainNav">
     <div class="nav-inner">
       <a href="#" class="nav-logo">Syncify</a>
+
       <div class="nav-links">
         <a href="#features" class="nav-link">Features</a>
+        <a href="#how" class="nav-link">How It Works</a>
         <a href="#rooms" class="nav-link">Mood Rooms</a>
         <a href="#snap" class="nav-link">Snap Points</a>
         <a href="#ai" class="nav-link">AI Bond</a>
       </div>
+
       <div class="nav-actions">
         <a href="login.html" class="btn btn-ghost btn-sm">Log in</a>
-        <a href="signup.html" class="btn btn-primary btn-sm">Get Started</a>
+        <a href="signup.html" class="btn btn-primary btn-sm">Get Started Free</a>
       </div>
     </div>
   </nav>
 
-  <!-- HERO -->
+  <!-- ╔══════════════════════════════════════════╗
+       ║  HERO                                    ║
+       ╚══════════════════════════════════════════╝ -->
   <section class="hero">
-    <div class="hero-orb orb-1"></div>
-    <div class="hero-orb orb-2"></div>
-    <div class="hero-orb orb-3"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="hero-grid"></div>
 
-    <div class="hero-content">
-      <div class="hero-text">
+    <div class="hero-inner">
+      <!-- Left: Copy -->
+      <div class="hero-left">
         <div class="hero-eyebrow">
-          <span class="hero-eyebrow-dot"></span>
+          <span class="eyebrow-pulse"></span>
           Real-Time Music Bonding
         </div>
+
         <h1 class="hero-title">
           Music that<br>
-          <span class="line-2">bonds souls</span>
+          <span class="line-accent">bonds souls</span>
         </h1>
-        <p class="hero-subtitle">
-          Sync listen with zero delay. Share songs. Build streaks.
-          Let AI measure your music compatibility — in real time.
+
+        <p class="hero-sub">
+          Sync listen with zero delay. Chat with songs. Build streaks.
+          Let AI calculate how deeply your music tastes connect — in real time.
         </p>
+
         <div class="hero-actions">
           <a href="signup.html" class="btn btn-primary btn-lg">
+            <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
             Start Syncing Free
           </a>
-          <a href="#features" class="btn btn-secondary btn-lg">
+          <a href="#how" class="btn btn-secondary btn-lg">
             See How It Works
           </a>
         </div>
-        <div class="hero-stats">
-          <div class="stat-item">
-            <div class="stat-number">0ms</div>
-            <div class="stat-label">Sync Delay</div>
+
+        <div class="hero-social-proof">
+          <div class="sp-avatars">
+            <div class="sp-av sp-av-1">A</div>
+            <div class="sp-av sp-av-2">K</div>
+            <div class="sp-av sp-av-3">M</div>
+            <div class="sp-av sp-av-4">R</div>
           </div>
-          <div class="stat-item">
-            <div class="stat-number">5</div>
-            <div class="stat-label">Mood Rooms</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-number">AI</div>
-            <div class="stat-label">Powered Bonds</div>
+          <div class="sp-text">
+            <strong>Built for music relationships.</strong><br>
+            Zero delay. Real bonds.
           </div>
         </div>
       </div>
 
+      <!-- Right: Player mockup -->
       <div class="hero-visual">
-        <!-- Floating reaction bubbles -->
-        <div class="reaction-bubble reaction-1">❤️ This beat!</div>
-        <div class="reaction-bubble reaction-2">🔥 Fire track</div>
-        <div class="reaction-bubble reaction-3">🎵 Synced!</div>
-        <div class="reaction-bubble reaction-4">✨ Soul Sync</div>
+        <div class="float-bubble fb-1">❤️ This beat drops hard!</div>
+        <div class="float-bubble fb-2">🔥 Soul Sync: 92%</div>
+        <div class="float-bubble fb-3">🎵 Perfectly synced!</div>
+        <div class="float-bubble fb-4">✨ +15 Snap Points</div>
 
-        <!-- Player mockup -->
-        <div class="player-mockup">
-          <div class="player-cover">
-            <div class="player-cover-inner">
-              <div class="vinyl"></div>
+        <div class="player-card">
+          <!-- Album Art -->
+          <div class="album-art">
+            <div class="album-glow"></div>
+            <div class="vinyl-wrap">
+              <div class="vinyl-disc"></div>
             </div>
           </div>
 
-          <div class="player-info">
-            <div class="player-song">
-              <div class="player-title">Midnight Frequency</div>
-              <div class="player-artist">The Resonants</div>
+          <!-- Track info -->
+          <div class="track-row">
+            <div>
+              <div class="track-name">Midnight Frequency</div>
+              <div class="track-artist">The Resonants · Ambient</div>
             </div>
-            <div class="sync-badge">
+            <div class="sync-pill">
               <span class="sync-dot"></span>
               Synced
             </div>
           </div>
 
+          <!-- Waveform -->
           <div class="waveform">
-            <div class="wave-bar active"></div>
-            <div class="wave-bar active"></div>
-            <div class="wave-bar active"></div>
-            <div class="wave-bar active"></div>
-            <div class="wave-bar active"></div>
-            <div class="wave-bar active"></div>
+            <div class="wave-bar played"></div>
+            <div class="wave-bar played"></div>
+            <div class="wave-bar played"></div>
+            <div class="wave-bar played"></div>
+            <div class="wave-bar played"></div>
+            <div class="wave-bar played"></div>
+            <div class="wave-bar played"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
             <div class="wave-bar"></div>
             <div class="wave-bar"></div>
             <div class="wave-bar"></div>
@@ -1007,19 +1481,36 @@
             <div class="wave-bar"></div>
           </div>
 
+          <!-- Progress -->
+          <div class="progress-track">
+            <div class="progress-fill"></div>
+          </div>
+          <div class="progress-times">
+            <span>1:47</span>
+            <span>4:12</span>
+          </div>
+
+          <!-- Controls -->
           <div class="player-controls">
-            <button class="ctrl-btn">⏮</button>
-            <button class="ctrl-btn-main">⏸</button>
-            <button class="ctrl-btn">⏭</button>
+            <button class="ctrl" title="Previous">⏮</button>
+            <button class="ctrl-main" title="Pause">⏸</button>
+            <button class="ctrl" title="Next">⏭</button>
           </div>
 
-          <div class="synced-users">
-            <div class="synced-avatars">
-              <div class="synced-avatar av1">A</div>
-              <div class="synced-avatar av2">K</div>
+          <!-- Synced users -->
+          <div class="synced-bar">
+            <div class="synced-left">
+              <div class="synced-avs">
+                <div class="synced-av sav1">A</div>
+                <div class="synced-av sav2">K</div>
+              </div>
+              <div class="synced-txt">
+                <strong>2 listeners</strong> in sync
+              </div>
             </div>
-            <div class="synced-text">
-              <strong>2 people</strong> listening together
+            <div class="quality-pill">
+              <span class="quality-dot"></span>
+              HD · &lt;50ms
             </div>
           </div>
         </div>
@@ -1027,86 +1518,130 @@
     </div>
   </section>
 
-  <!-- FEATURES -->
-  <section class="features" id="features">
+  <!-- ╔══════════════════════════════════════════╗
+       ║  MARQUEE                                 ║
+       ╚══════════════════════════════════════════╝ -->
+  <div class="marquee-strip">
+    <div class="marquee-track">
+      <span class="marquee-item"><span class="marquee-dot"></span>Zero-delay sync engine</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>AI Soul Sync Score</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>Real-time reactions</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>Snap point streaks</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>5 mood rooms</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>Voice notes in sync</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>Memory timeline</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>Private listening mode</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>Weekly bond reports</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>Daily challenges</span>
+      <!-- Duplicated for infinite loop -->
+      <span class="marquee-item"><span class="marquee-dot"></span>Zero-delay sync engine</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>AI Soul Sync Score</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>Real-time reactions</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>Snap point streaks</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>5 mood rooms</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>Voice notes in sync</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>Memory timeline</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>Private listening mode</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>Weekly bond reports</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>Daily challenges</span>
+    </div>
+  </div>
+
+  <!-- ╔══════════════════════════════════════════╗
+       ║  FEATURES                                ║
+       ╚══════════════════════════════════════════╝ -->
+  <section class="features-section" id="features">
     <div class="container">
-      <div class="section-header">
-        <span class="section-label">Everything You Need</span>
-        <h2 class="section-title">Built for music<br>relationships</h2>
-        <p class="section-subtitle">
-          Every feature designed to deepen the bond between you and the people you listen with.
-        </p>
+      <div class="section-header center">
+        <p class="section-eyebrow">Core Features</p>
+        <h2 class="section-title">Built for music<br><span class="gradient-text">relationships</span></h2>
+        <p class="section-sub">Every feature is designed to deepen the bond between you and the people you listen with.</p>
       </div>
 
       <div class="features-grid">
-        <div class="feature-card featured card-glow">
-          <div class="feature-icon icon-purple">🔄</div>
-          <div class="feature-title">Zero-Delay Sync Engine</div>
-          <p class="feature-desc">
-            Server-authoritative time syncing with latency ping detection and automatic drift
-            correction. If you fall behind by more than 300ms, you're silently realigned.
-            No jarring jumps. Just perfect harmony.
-          </p>
+        <div class="feat-card wide">
+          <div class="feat-icon fi-purple">🔄</div>
+          <div class="feat-title">Zero-Delay Sync Engine</div>
+          <p class="feat-desc">Server-authoritative time syncing with latency ping detection and automatic drift correction. If you fall behind by more than 300ms, you're silently realigned — no jarring jumps. WebSocket room per session ensures perfect harmony at all times, even on mobile networks.</p>
         </div>
 
-        <div class="feature-card card-glow">
-          <div class="feature-icon icon-green">🤖</div>
-          <div class="feature-title">Soul Sync Score</div>
-          <p class="feature-desc">
-            AI analyses your genre overlap, mood patterns, and listening history to generate
-            a compatibility score from 0–100%.
-          </p>
+        <div class="feat-card">
+          <div class="feat-icon fi-green">🤖</div>
+          <div class="feat-title">AI Soul Sync Score</div>
+          <p class="feat-desc">Analyses genre overlap, mood patterns, shared songs, and listening time to generate a compatibility score from 0–100%. Updated weekly with an emotional summary.</p>
         </div>
 
-        <div class="feature-card card-glow">
-          <div class="feature-icon icon-pink">💬</div>
-          <div class="feature-title">Music Chat</div>
-          <p class="feature-desc">
-            Share songs and playlists directly inside conversations. Drop voice notes
-            at specific timestamps during sync sessions.
-          </p>
+        <div class="feat-card">
+          <div class="feat-icon fi-pink">💬</div>
+          <div class="feat-title">Music Chat</div>
+          <p class="feat-desc">Share songs and playlists directly inside conversations. Drop voice notes attached to specific timestamps during sync sessions. Real-time typing indicators.</p>
         </div>
 
-        <div class="feature-card card-glow">
-          <div class="feature-icon icon-gold">⚡</div>
-          <div class="feature-title">Snap Point System</div>
-          <p class="feature-desc">
-            Gamified bonding with streak mechanics, daily challenges, XP boosts,
-            and mood room multipliers.
-          </p>
+        <div class="feat-card">
+          <div class="feat-icon fi-gold">⚡</div>
+          <div class="feat-title">Snap Points & Streaks</div>
+          <p class="feat-desc">Gamified bonding with daily streaks, challenge XP, and mood room multipliers. Climb from New Vibes all the way to Legendary Bond.</p>
         </div>
 
-        <div class="feature-card card-glow">
-          <div class="feature-icon icon-blue">🕐</div>
-          <div class="feature-title">Memory Timeline</div>
-          <p class="feature-desc">
-            Automatically records every milestone — first sync, first shared playlist,
-            longest session, highest streak — in a beautiful visual timeline.
-          </p>
+        <div class="feat-card">
+          <div class="feat-icon fi-blue">🕐</div>
+          <div class="feat-title">Memory Timeline</div>
+          <p class="feat-desc">Auto-records every milestone — first sync, first shared playlist, longest session, highest streak — displayed in a gorgeous emotional timeline.</p>
         </div>
 
-        <div class="feature-card card-glow">
-          <div class="feature-icon icon-purple">😶‍🌫️</div>
-          <div class="feature-title">Private Mode</div>
-          <p class="feature-desc">
-            Incognito listening sessions. No snap points. No streak impact.
-            Hidden from all activity feeds.
-          </p>
+        <div class="feat-card">
+          <div class="feat-icon fi-purple">😶‍🌫️</div>
+          <div class="feat-title">Private Listening Mode</div>
+          <p class="feat-desc">Encrypted sessions. No snap points. No streak impact. Hidden from all activity feeds. Listen together without leaving a trace.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- MOOD ROOMS -->
-  <section class="mood-rooms" id="rooms">
+  <!-- ╔══════════════════════════════════════════╗
+       ║  HOW IT WORKS                            ║
+       ╚══════════════════════════════════════════╝ -->
+  <section class="how-section" id="how">
+    <div class="container">
+      <div class="section-header center">
+        <p class="section-eyebrow">How It Works</p>
+        <h2 class="section-title">Up and synced in<br><span class="gradient-text">60 seconds</span></h2>
+      </div>
+
+      <div class="how-steps">
+        <div class="step-card">
+          <div class="step-num">1</div>
+          <div class="step-title">Create Account</div>
+          <p class="step-desc">Sign up with Google or email. Your music profile is set up instantly.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">2</div>
+          <div class="step-title">Add Friends</div>
+          <p class="step-desc">Search by username. Send a request. Once connected, your streak starts.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">3</div>
+          <div class="step-title">Start a Sync</div>
+          <p class="step-desc">Pick a song, generate a session code, share it. Your friend joins instantly.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">4</div>
+          <div class="step-title">Bond Grows</div>
+          <p class="step-desc">Earn snap points, build streaks, get your weekly AI bond report. Watch your connection deepen.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ╔══════════════════════════════════════════╗
+       ║  MOOD ROOMS                              ║
+       ╚══════════════════════════════════════════╝ -->
+  <section class="rooms-section" id="rooms">
     <div class="container">
       <div class="section-header">
-        <span class="section-label">Live Spaces</span>
-        <h2 class="section-title">Find your vibe.<br>Join the room.</h2>
-        <p class="section-subtitle">
-          Five mood-based public rooms running 24/7. Join, listen together,
-          chat, and earn bonus snap points.
-        </p>
+        <p class="section-eyebrow">Live Spaces</p>
+        <h2 class="section-title">Find your vibe.<br><span class="gradient-text">Join the room.</span></h2>
+        <p class="section-sub">Five mood-based public rooms running 24/7. Join, listen together, chat, and earn bonus snap multipliers.</p>
       </div>
 
       <div class="rooms-grid">
@@ -1114,10 +1649,11 @@
           <span class="room-emoji">🌊</span>
           <div class="room-info">
             <div class="room-name">Chill Zone</div>
-            <div class="room-members">
-              <span class="room-live-dot"></span>
-              247 listening
+            <div class="room-meta">
+              <span class="live-dot"></span>
+              247 listening now
             </div>
+            <div class="room-mult">⚡ ×1.5 Snap</div>
           </div>
         </div>
 
@@ -1125,10 +1661,11 @@
           <span class="room-emoji">📚</span>
           <div class="room-info">
             <div class="room-name">Study Hours</div>
-            <div class="room-members">
-              <span class="room-live-dot"></span>
-              183 listening
+            <div class="room-meta">
+              <span class="live-dot"></span>
+              183 listening now
             </div>
+            <div class="room-mult">⚡ ×1.3 Snap</div>
           </div>
         </div>
 
@@ -1136,10 +1673,11 @@
           <span class="room-emoji">💪</span>
           <div class="room-info">
             <div class="room-name">Gym Energy</div>
-            <div class="room-members">
-              <span class="room-live-dot"></span>
-              412 listening
+            <div class="room-meta">
+              <span class="live-dot"></span>
+              412 listening now
             </div>
+            <div class="room-mult">⚡ ×1.8 Snap</div>
           </div>
         </div>
 
@@ -1147,10 +1685,11 @@
           <span class="room-emoji">🎉</span>
           <div class="room-info">
             <div class="room-name">Party Mode</div>
-            <div class="room-members">
-              <span class="room-live-dot"></span>
-              891 listening
+            <div class="room-meta">
+              <span class="live-dot"></span>
+              891 listening now
             </div>
+            <div class="room-mult">⚡ ×2.0 Snap</div>
           </div>
         </div>
 
@@ -1158,206 +1697,445 @@
           <span class="room-emoji">🌙</span>
           <div class="room-info">
             <div class="room-name">Late Night</div>
-            <div class="room-members">
-              <span class="room-live-dot"></span>
-              334 listening
+            <div class="room-meta">
+              <span class="live-dot"></span>
+              334 listening now
             </div>
+            <div class="room-mult">⚡ ×1.5 Snap</div>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- SNAP SYSTEM -->
+  <!-- ╔══════════════════════════════════════════╗
+       ║  SNAP SYSTEM                             ║
+       ╚══════════════════════════════════════════╝ -->
   <section class="snap-section" id="snap">
     <div class="container">
       <div class="snap-layout">
+        <!-- Left: Bond Levels -->
         <div>
-          <span class="section-label">Gamification</span>
-          <h2 class="section-title">Every listen<br>earns points</h2>
-          <p class="section-subtitle" style="margin-top:var(--space-4)">
-            Build streaks. Level up your bond. Reach Legendary status.
-          </p>
+          <p class="section-eyebrow">Gamification</p>
+          <h2 class="section-title">Every listen<br><span class="gradient-text">earns points</span></h2>
+          <p class="section-sub">Build streaks. Level up your bond. Reach Legendary status with your most compatible friend.</p>
 
-          <div class="snap-levels">
-            <div class="level-item">
-              <div class="level-icon" style="background:rgba(148,161,178,0.2)">🎵</div>
-              <div class="level-info">
+          <div class="level-list">
+            <div class="level-row">
+              <div class="level-ico" style="background:rgba(148,161,178,0.15)">🎵</div>
+              <div class="level-detail">
                 <div class="level-name" style="color:#94a1b2">New Vibes</div>
-                <div class="level-range">0 – 99 points</div>
+                <div class="level-pts">0 – 99 points</div>
               </div>
+              <span class="level-arrow">→</span>
             </div>
-            <div class="level-item">
-              <div class="level-icon" style="background:rgba(44,182,125,0.2)">🎶</div>
-              <div class="level-info">
+            <div class="level-row">
+              <div class="level-ico" style="background:rgba(44,182,125,0.15)">🎶</div>
+              <div class="level-detail">
                 <div class="level-name" style="color:#2cb67d">Music Buddies</div>
-                <div class="level-range">100 – 499 points</div>
+                <div class="level-pts">100 – 499 points</div>
               </div>
+              <span class="level-arrow">→</span>
             </div>
-            <div class="level-item">
-              <div class="level-icon" style="background:rgba(127,90,240,0.2)">🔮</div>
-              <div class="level-info">
+            <div class="level-row">
+              <div class="level-ico" style="background:rgba(127,90,240,0.15)">🔮</div>
+              <div class="level-detail">
                 <div class="level-name" style="color:#7f5af0">Soul Sync</div>
-                <div class="level-range">500 – 1499 points</div>
+                <div class="level-pts">500 – 1499 points</div>
               </div>
+              <span class="level-arrow">→</span>
             </div>
-            <div class="level-item">
-              <div class="level-icon" style="background:rgba(255,215,0,0.2)">👑</div>
-              <div class="level-info">
+            <div class="level-row">
+              <div class="level-ico" style="background:rgba(255,215,0,0.15)">👑</div>
+              <div class="level-detail">
                 <div class="level-name" style="color:#ffd700">Legendary Bond</div>
-                <div class="level-range">1500+ points</div>
+                <div class="level-pts">1500+ points</div>
               </div>
+              <span class="level-arrow">→</span>
             </div>
           </div>
         </div>
 
-        <div class="snap-visual">
-          <div class="snap-action">
-            <span class="snap-action-label">🎵 Send a song</span>
-            <span class="snap-action-points">+5 pts</span>
+        <!-- Right: Actions -->
+        <div class="snap-actions">
+          <div class="snap-row">
+            <span class="snap-label">🎵 Send a song to a friend</span>
+            <span class="snap-pts">+5 pts</span>
           </div>
-          <div class="snap-action">
-            <span class="snap-action-label">📋 Share a playlist</span>
-            <span class="snap-action-points">+10 pts</span>
+          <div class="snap-row">
+            <span class="snap-label">📋 Share a playlist</span>
+            <span class="snap-pts">+10 pts</span>
           </div>
-          <div class="snap-action">
-            <span class="snap-action-label">🔄 Sync listen</span>
-            <span class="snap-action-points">+15 pts</span>
+          <div class="snap-row">
+            <span class="snap-label">🔄 Complete a sync session</span>
+            <span class="snap-pts">+15 pts</span>
           </div>
-          <div class="snap-action">
-            <span class="snap-action-label">🔥 Daily streak</span>
-            <span class="snap-action-points">+20 pts</span>
+          <div class="snap-row">
+            <span class="snap-label">🔥 Maintain daily streak</span>
+            <span class="snap-pts">+20 pts</span>
           </div>
-          <div class="snap-action">
-            <span class="snap-action-label">⚡ 5 consecutive syncs</span>
-            <span class="snap-action-points">+50 pts</span>
+          <div class="snap-row">
+            <span class="snap-label">⚡ 5 consecutive sync sessions</span>
+            <span class="snap-pts">+50 pts</span>
           </div>
-          <div class="snap-action" style="border-color:rgba(127,90,240,0.3);background:rgba(127,90,240,0.06)">
-            <span class="snap-action-label">🎭 Mood room bonus</span>
-            <span class="snap-action-points">×2.0</span>
+          <div class="snap-row">
+            <span class="snap-label">✅ Complete a daily challenge</span>
+            <span class="snap-pts">+25 pts</span>
+          </div>
+          <div class="snap-row special">
+            <span class="snap-label">🎭 Mood room snap multiplier</span>
+            <span class="snap-pts">×2.0</span>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- AI SECTION -->
+  <!-- ╔══════════════════════════════════════════╗
+       ║  AI BOND                                 ║
+       ╚══════════════════════════════════════════╝ -->
   <section class="ai-section" id="ai">
     <div class="container">
-      <div class="section-header">
-        <span class="section-label">Powered by AI</span>
-        <h2 class="section-title">Your music tells<br>a love story</h2>
-        <p class="section-subtitle">
-          Syncify's AI analyses your shared listening patterns to generate
-          a compatibility score and weekly bond report.
-        </p>
-      </div>
+      <div class="ai-layout">
+        <!-- Left: Compatibility card -->
+        <div>
+          <div class="compat-card">
+            <div class="compat-ring-wrap">
+              <svg class="ring-svg" viewBox="0 0 200 200">
+                <defs>
+                  <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#7f5af0"/>
+                    <stop offset="100%" stop-color="#2cb67d"/>
+                  </linearGradient>
+                </defs>
+                <circle class="ring-track" cx="100" cy="100" r="80"/>
+                <circle class="ring-progress" cx="100" cy="100" r="80" id="ringProg"/>
+              </svg>
+              <div class="ring-center">
+                <div class="ring-pct" id="ringPct">85%</div>
+                <div class="ring-label">Soul Sync Score</div>
+              </div>
+            </div>
 
-      <div class="ai-card">
-        <div class="compatibility-ring">
-          <svg class="ring-svg" viewBox="0 0 200 200">
-            <defs>
-              <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stop-color="#7f5af0"/>
-                <stop offset="100%" stop-color="#2cb67d"/>
-              </linearGradient>
-            </defs>
-            <circle class="ring-bg" cx="100" cy="100" r="80"/>
-            <circle class="ring-fill" cx="100" cy="100" r="80"/>
-          </svg>
-          <div class="ring-label">
-            <div class="ring-percent">85%</div>
-            <div class="ring-text">Soul Sync Score</div>
+            <div class="compat-breakdown">
+              <div class="breakdown-item">
+                <div class="breakdown-head">
+                  <span style="font-size:var(--t-xs);color:var(--text-secondary)">Genre Overlap</span>
+                  <span style="font-size:var(--t-xs);font-weight:700">88%</span>
+                </div>
+                <div class="breakdown-bar"><div class="breakdown-fill" style="width:88%"></div></div>
+              </div>
+              <div class="breakdown-item">
+                <div class="breakdown-head">
+                  <span style="font-size:var(--t-xs);color:var(--text-secondary)">Mood Similarity</span>
+                  <span style="font-size:var(--t-xs);font-weight:700">79%</span>
+                </div>
+                <div class="breakdown-bar"><div class="breakdown-fill" style="width:79%"></div></div>
+              </div>
+              <div class="breakdown-item">
+                <div class="breakdown-head">
+                  <span style="font-size:var(--t-xs);color:var(--text-secondary)">Listening Overlap</span>
+                  <span style="font-size:var(--t-xs);font-weight:700">92%</span>
+                </div>
+                <div class="breakdown-bar"><div class="breakdown-fill" style="width:92%"></div></div>
+              </div>
+              <div class="breakdown-item">
+                <div class="breakdown-head">
+                  <span style="font-size:var(--t-xs);color:var(--text-secondary)">Shared Songs</span>
+                  <span style="font-size:var(--t-xs);font-weight:700">71%</span>
+                </div>
+                <div class="breakdown-bar"><div class="breakdown-fill" style="width:71%"></div></div>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div class="ai-features">
-          <div class="ai-feature">
-            <div class="ai-feature-emoji">🎸</div>
-            <div class="ai-feature-title">Genre Overlap</div>
-            <div class="ai-feature-desc">How similar your music tastes are</div>
-          </div>
-          <div class="ai-feature">
-            <div class="ai-feature-emoji">🌙</div>
-            <div class="ai-feature-title">Mood Patterns</div>
-            <div class="ai-feature-desc">When and how you listen together</div>
-          </div>
-          <div class="ai-feature">
-            <div class="ai-feature-emoji">📈</div>
-            <div class="ai-feature-title">Weekly Report</div>
-            <div class="ai-feature-desc">Bond growth and emotional summary</div>
+        <!-- Right: Features -->
+        <div>
+          <p class="section-eyebrow">Powered by AI</p>
+          <h2 class="section-title">Your music tells<br><span class="gradient-text">a love story</span></h2>
+          <p class="section-sub">Syncify's AI analyses shared listening patterns to generate a compatibility score and weekly emotional bond report.</p>
+
+          <div class="ai-features-list">
+            <div class="ai-feat">
+              <div class="ai-feat-ico">🎸</div>
+              <div>
+                <div class="ai-feat-title">Genre & Mood Analysis</div>
+                <div class="ai-feat-desc">Measures how similar your taste is across 18 genres and 10 mood categories. Updates in real time as you listen.</div>
+              </div>
+            </div>
+            <div class="ai-feat">
+              <div class="ai-feat-ico">📊</div>
+              <div>
+                <div class="ai-feat-title">Weekly Bond Report</div>
+                <div class="ai-feat-desc">Every Sunday, get a personalised paragraph summarising your week — bond growth %, dominant mood, and suggestions to grow closer.</div>
+              </div>
+            </div>
+            <div class="ai-feat">
+              <div class="ai-feat-ico">📈</div>
+              <div>
+                <div class="ai-feat-title">Bond Growth Tracking</div>
+                <div class="ai-feat-desc">Watch your compatibility evolve over time with visual graphs and milestone celebrations.</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- CTA -->
-  <section class="cta">
+  <!-- ╔══════════════════════════════════════════╗
+       ║  SOCIAL PROOF                            ║
+       ╚══════════════════════════════════════════╝ -->
+  <section class="proof-section">
     <div class="container">
-      <div class="cta-content">
+      <div class="section-header center">
+        <p class="section-eyebrow">Early Reactions</p>
+        <h2 class="section-title">People are already<br><span class="gradient-text">bonding</span></h2>
+      </div>
+
+      <div class="proof-grid">
+        <div class="proof-card">
+          <div class="proof-stars">★★★★★</div>
+          <p class="proof-text">"We've been friends for years but I never knew our music taste was 94% compatible. Syncify showed us something we never knew."</p>
+          <div class="proof-author">
+            <div class="proof-av" style="background:linear-gradient(135deg,#7f5af0,#2cb67d)">A</div>
+            <div>
+              <div class="proof-name">Anika Sharma</div>
+              <div class="proof-handle">Soul Sync level · 847 pts</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="proof-card">
+          <div class="proof-stars">★★★★★</div>
+          <p class="proof-text">"The sync engine is genuinely magic. We're in different cities and it feels like we're in the same room. Not once did we fall out of sync."</p>
+          <div class="proof-author">
+            <div class="proof-av" style="background:linear-gradient(135deg,#e53170,#7f5af0)">K</div>
+            <div>
+              <div class="proof-name">Karthik Rajan</div>
+              <div class="proof-handle">Legendary Bond · 2,140 pts</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="proof-card">
+          <div class="proof-stars">★★★★★</div>
+          <p class="proof-text">"The weekly AI bond report made us actually TRY to listen together more. We went from 62% to 81% compatibility in 3 weeks."</p>
+          <div class="proof-author">
+            <div class="proof-av" style="background:linear-gradient(135deg,#ffbe0b,#e53170)">M</div>
+            <div>
+              <div class="proof-name">Meera Pillai</div>
+              <div class="proof-handle">Music Buddies · 380 pts</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ╔══════════════════════════════════════════╗
+       ║  CTA                                     ║
+       ╚══════════════════════════════════════════╝ -->
+  <section class="cta-section">
+    <div class="container">
+      <div class="cta-inner">
+        <div class="cta-badge">✨ Free Forever — No Credit Card</div>
         <h2 class="cta-title">
           Ready to find your<br>
           <span class="gradient-text">music soulmate?</span>
         </h2>
         <p class="cta-sub">
-          Join Syncify free. No credit card. No ads. Just music and the people you love.
+          Join Syncify free. No ads. No paywalls. Just music, bonds, and the people who get you.
         </p>
         <div class="cta-actions">
-          <a href="signup.html" class="btn btn-primary btn-lg">Start Free Today</a>
-          <a href="login.html" class="btn btn-secondary btn-lg">I have an account</a>
+          <a href="signup.html" class="btn btn-primary btn-lg">
+            <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2"><path d="M9 18l6-6-6-6"/></svg>
+            Start Free Today
+          </a>
+          <a href="login.html" class="btn btn-secondary btn-lg">I already have an account</a>
         </div>
+        <p class="cta-note">No credit card · No ads · Cancel anytime</p>
       </div>
     </div>
   </section>
 
-  <!-- FOOTER -->
+  <!-- ╔══════════════════════════════════════════╗
+       ║  FOOTER                                  ║
+       ╚══════════════════════════════════════════╝ -->
   <footer class="footer">
-    <div class="footer-inner">
-      <div class="footer-logo">Syncify</div>
-      <div class="footer-copy">© 2026 Syncify. Built with music and love.</div>
-      <div class="footer-links">
-        <a href="#" class="footer-link">Privacy</a>
-        <a href="#" class="footer-link">Terms</a>
-        <a href="#" class="footer-link">Contact</a>
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div class="footer-logo">Syncify</div>
+          <p class="footer-tagline">Real-time music bonding for the people who matter most.</p>
+        </div>
+
+        <div>
+          <div class="footer-col-title">Product</div>
+          <div class="footer-links">
+            <a href="#features" class="footer-link">Features</a>
+            <a href="#rooms" class="footer-link">Mood Rooms</a>
+            <a href="#snap" class="footer-link">Snap Points</a>
+            <a href="#ai" class="footer-link">AI Bond Score</a>
+          </div>
+        </div>
+
+        <div>
+          <div class="footer-col-title">Platform</div>
+          <div class="footer-links">
+            <a href="signup.html" class="footer-link">Get Started</a>
+            <a href="login.html" class="footer-link">Log In</a>
+            <a href="#how" class="footer-link">How It Works</a>
+          </div>
+        </div>
+
+        <div>
+          <div class="footer-col-title">Company</div>
+          <div class="footer-links">
+            <a href="#" class="footer-link">About</a>
+            <a href="#" class="footer-link">Privacy Policy</a>
+            <a href="#" class="footer-link">Terms of Service</a>
+            <a href="#" class="footer-link">Contact</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div class="footer-copy">© 2026 Syncify. Built with 🎵 and way too much coffee.</div>
+        <div class="footer-legal">
+          <a href="#">Privacy</a>
+          <a href="#">Terms</a>
+          <a href="#">Cookies</a>
+        </div>
       </div>
     </div>
   </footer>
 
+  <!-- ═══════════════════════════════════════════════
+       JAVASCRIPT
+  ═══════════════════════════════════════════════ -->
   <script>
-    // Nav scroll effect
+    // ── Nav scroll effect ──
     const nav = document.getElementById('mainNav');
-    window.addEventListener('scroll', () => {
-      nav.classList.toggle('scrolled', window.scrollY > 50);
-    });
+    const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 60);
+    window.addEventListener('scroll', onScroll, { passive: true });
 
-    // Smooth scroll for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(a => {
-      a.addEventListener('click', e => {
-        const target = document.querySelector(a.getAttribute('href'));
+    // ── Smooth scroll for anchor links ──
+    document.querySelectorAll('a[href^="#"]').forEach(link => {
+      link.addEventListener('click', e => {
+        const target = document.querySelector(link.getAttribute('href'));
         if (target) {
           e.preventDefault();
-          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          const top = target.getBoundingClientRect().top + window.scrollY - 80;
+          window.scrollTo({ top, behavior: 'smooth' });
         }
       });
     });
 
-    // Intersection Observer for scroll animations
-    const observer = new IntersectionObserver((entries) => {
+    // ── Scroll-triggered reveal animations ──
+    const revealOpts = { threshold: 0.1, rootMargin: '0px 0px -40px 0px' };
+    const revealObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          entry.target.style.opacity = '1';
-          entry.target.style.transform = 'translateY(0)';
+          entry.target.classList.add('revealed');
+          revealObserver.unobserve(entry.target);
         }
       });
-    }, { threshold: 0.1 });
+    }, revealOpts);
 
-    document.querySelectorAll('.feature-card, .room-card, .level-item, .snap-action, .ai-feature').forEach(el => {
-      el.style.opacity = '0';
-      el.style.transform = 'translateY(20px)';
-      el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-      observer.observe(el);
+    // Add reveal styles
+    const style = document.createElement('style');
+    style.textContent = `
+      .reveal-item {
+        opacity: 0;
+        transform: translateY(24px);
+        transition: opacity 0.55s cubic-bezier(0.4,0,0.2,1), transform 0.55s cubic-bezier(0.4,0,0.2,1);
+      }
+      .reveal-item.revealed {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    `;
+    document.head.appendChild(style);
+
+    document.querySelectorAll(
+      '.feat-card, .step-card, .room-card, .level-row, .snap-row, .ai-feat, .proof-card'
+    ).forEach((el, i) => {
+      el.classList.add('reveal-item');
+      el.style.transitionDelay = `${(i % 4) * 80}ms`;
+      revealObserver.observe(el);
     });
+
+    // ── Animated ring counter ──
+    const ringObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          animateRing();
+          ringObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    const compatCard = document.querySelector('.compat-card');
+    if (compatCard) ringObserver.observe(compatCard);
+
+    function animateRing() {
+      const prog = document.getElementById('ringProg');
+      const pct  = document.getElementById('ringPct');
+      if (!prog || !pct) return;
+      const targetPct = 85;
+      const circumference = 502;
+      const targetOffset = circumference - (circumference * targetPct / 100);
+
+      let current = 0;
+      const duration = 1500;
+      const startTime = performance.now();
+
+      const tick = (now) => {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        current = Math.round(eased * targetPct);
+        pct.textContent = current + '%';
+        prog.style.strokeDashoffset = circumference - (circumference * current / 100);
+        if (progress < 1) requestAnimationFrame(tick);
+      };
+
+      requestAnimationFrame(tick);
+    }
+
+    // ── Waveform animation toggle (simulate playing) ──
+    let isPlaying = true;
+    const playBtn = document.querySelector('.ctrl-main');
+    const waveBars = document.querySelectorAll('.wave-bar.played');
+
+    if (playBtn) {
+      playBtn.addEventListener('click', () => {
+        isPlaying = !isPlaying;
+        playBtn.textContent = isPlaying ? '⏸' : '▶️';
+        waveBars.forEach(bar => {
+          bar.style.animationPlayState = isPlaying ? 'running' : 'paused';
+        });
+      });
+    }
+
+    // ── Progress bar live animation ──
+    const progressFill = document.querySelector('.progress-fill');
+    const timeEl = document.querySelector('.progress-times span');
+    if (progressFill && timeEl) {
+      let startSec = 107; // 1:47
+      const totalSec = 252; // 4:12
+      const fmt = s => `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
+
+      setInterval(() => {
+        if (!isPlaying) return;
+        startSec = (startSec + 1) % totalSec;
+        const pct = (startSec / totalSec) * 100;
+        progressFill.style.width = pct + '%';
+        timeEl.textContent = fmt(startSec);
+      }, 1000);
+    }
   </script>
 </body>
 </html>

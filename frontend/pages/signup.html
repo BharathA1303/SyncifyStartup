@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Syncify — Create Account</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --purple:#7f5af0; --green:#2cb67d; --pink:#e53170; --gold:#ffd700;
+      --grad:linear-gradient(135deg,#7f5af0 0%,#2cb67d 100%);
+      --bg:#080810; --surface:#0d0d1b; --raised:#13131f; --overlay:#18182a; --input:#0b0b18;
+      --t1:#f0eeff; --t2:#8892a4; --t3:#4a5568;
+      --b1:rgba(255,255,255,0.06); --b2:rgba(255,255,255,0.11);
+      --b-purple:rgba(127,90,240,0.35); --b-err:rgba(229,49,112,0.45); --b-ok:rgba(44,182,125,0.35);
+      --r-sm:8px; --r-md:13px; --r-lg:20px; --r-full:9999px;
+      --xs:clamp(.62rem,1.1vw,.72rem); --sm:clamp(.78rem,1.4vw,.88rem);
+      --base:clamp(.9rem,1.7vw,1rem); --lg:clamp(1.1rem,2.4vw,1.28rem);
+      --xl:clamp(1.3rem,3vw,1.6rem); --2xl:clamp(1.6rem,4vw,2.1rem); --3xl:clamp(1.9rem,5vw,2.7rem);
+      --sp2:clamp(.5rem,1vw,.75rem); --sp3:clamp(.75rem,1.5vw,1rem);
+      --sp4:clamp(1rem,2vw,1.5rem); --sp5:clamp(1.25rem,2.5vw,1.75rem);
+      --sp6:clamp(1.5rem,3vw,2.25rem); --sp8:clamp(2rem,4vw,3rem);
+      --ease:cubic-bezier(.4,0,.2,1); --bounce:cubic-bezier(.34,1.56,.64,1);
+      --display:'Syne',sans-serif; --body:'DM Sans',sans-serif;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{height:100%}
+    body{font-family:var(--body);color:var(--t1);background:var(--bg);min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+    a{color:inherit;text-decoration:none}
+    button{font-family:var(--body);cursor:pointer;border:none;outline:none}
+    input,textarea{font-family:var(--body);outline:none}
+    ::selection{background:rgba(127,90,240,.3)}
+    ::-webkit-scrollbar{width:4px}
+    ::-webkit-scrollbar-thumb{background:var(--b1);border-radius:4px}
+
+    .page{display:grid;grid-template-columns:1fr 1fr;min-height:100vh}
+
+    /* ═══════════════════════════════════════
+       LEFT — Your Bond Journey
+       Concept: Show the user WHERE they're going.
+       A visual roadmap of the bond levels,
+       milestones, and what awaits them inside.
+       Unique to signup — not on the landing page.
+    ═══════════════════════════════════════ */
+    .left{
+      background:var(--surface);
+      position:relative;overflow:hidden;
+      display:flex;flex-direction:column;
+      padding:var(--sp6);gap:var(--sp5);
+    }
+    .orb{position:absolute;border-radius:50%;filter:blur(100px);pointer-events:none}
+    .o1{width:380px;height:380px;top:-90px;right:-80px;background:radial-gradient(circle,rgba(44,182,125,.16) 0%,transparent 70%);animation:od 17s ease-in-out infinite}
+    .o2{width:260px;height:260px;bottom:-60px;left:-50px;background:radial-gradient(circle,rgba(127,90,240,.13) 0%,transparent 70%);animation:od 22s ease-in-out infinite reverse}
+    @keyframes od{0%,100%{transform:translate(0,0)}50%{transform:translate(-3%,4%)}}
+    .dots{position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,.045) 1px,transparent 1px);background-size:26px 26px;mask-image:radial-gradient(ellipse 85% 85% at 50% 50%,#000 35%,transparent 100%)}
+    .logo{position:relative;z-index:2;font-family:var(--display);font-size:var(--xl);font-weight:800;letter-spacing:-.04em;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+    .main{position:relative;z-index:2;flex:1;display:flex;flex-direction:column;justify-content:center}
+    .panel-tag{display:inline-flex;align-items:center;gap:var(--sp2);margin-bottom:var(--sp4);background:rgba(44,182,125,.1);border:1px solid rgba(44,182,125,.2);border-radius:var(--r-full);padding:4px 13px}
+    .tag-dot{width:6px;height:6px;background:var(--green);border-radius:50%;animation:tp 2s ease-in-out infinite}
+    @keyframes tp{0%,100%{box-shadow:0 0 0 0 rgba(44,182,125,.5)}50%{box-shadow:0 0 0 5px rgba(44,182,125,0)}}
+    .tag-text{font-size:var(--xs);font-weight:700;color:#3de8a0;letter-spacing:.1em;text-transform:uppercase}
+    .panel-h{font-family:var(--display);font-size:var(--3xl);font-weight:800;letter-spacing:-.04em;line-height:1.08;margin-bottom:var(--sp2)}
+    .panel-h .hl{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .panel-sub{font-size:var(--sm);color:var(--t2);line-height:1.68;margin-bottom:var(--sp5)}
+
+    /* ── Bond Journey Path ── */
+    /* A visual vertical timeline showing progression */
+    .journey{display:flex;flex-direction:column;gap:0}
+    .jstep{
+      display:flex;align-items:flex-start;gap:var(--sp3);
+      padding:var(--sp3) 0;
+      position:relative;
+    }
+    /* Connecting line between steps */
+    .jstep:not(:last-child)::after{
+      content:'';position:absolute;
+      left:16px;top:46px;
+      width:2px;height:calc(100% - 12px);
+      background:linear-gradient(to bottom,var(--b2),var(--b1));
+    }
+    .jico{
+      width:34px;height:34px;border-radius:50%;
+      display:flex;align-items:center;justify-content:center;
+      font-size:15px;flex-shrink:0;z-index:1;
+      border:2px solid;
+    }
+    .jbody{padding-top:4px}
+    .jname{font-size:var(--sm);font-weight:700;margin-bottom:2px}
+    .jdesc{font-size:var(--xs);color:var(--t2);line-height:1.55}
+    .jpts{font-size:var(--xs);font-weight:700;display:inline-block;margin-top:4px;padding:2px 8px;border-radius:var(--r-full);border:1px solid}
+
+    /* ── What you unlock today ── */
+    .unlocks{margin-top:var(--sp4)}
+    .unlock-title{font-size:var(--xs);font-weight:700;color:var(--t2);letter-spacing:.08em;text-transform:uppercase;margin-bottom:var(--sp3)}
+    .unlock-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp2)}
+    .unlock-item{display:flex;align-items:center;gap:8px;font-size:var(--xs);color:var(--t2)}
+    .unlock-item::before{content:'✓';color:var(--green);font-weight:700;flex-shrink:0}
+
+    /* ── Bottom note ── */
+    .bottom{position:relative;z-index:2}
+    .bottom-note{font-size:var(--xs);color:var(--t3);line-height:1.65;border-left:2px solid rgba(44,182,125,.3);padding-left:var(--sp3)}
+
+    /* ═══════════════════════════════════════
+       RIGHT — Multi-Step Signup Form
+    ═══════════════════════════════════════ */
+    .right{
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      padding:var(--sp8) var(--sp6);
+      background:var(--bg);position:relative;overflow:hidden;
+    }
+    .right::before{content:'';position:absolute;left:0;top:8%;bottom:8%;width:1px;background:linear-gradient(to bottom,transparent,var(--b1) 25%,var(--b1) 75%,transparent)}
+
+    /* Step progress */
+    .progress{width:100%;max-width:420px;display:flex;align-items:center;gap:var(--sp2);margin-bottom:var(--sp6)}
+    .prog-pill{flex:1;height:3px;border-radius:3px;background:var(--b1);transition:background .4s var(--ease)}
+    .prog-pill.active{background:var(--grad)}
+    .prog-pill.done{background:var(--green)}
+    .prog-lbl{font-size:var(--xs);color:var(--t3);white-space:nowrap}
+
+    .shell{width:100%;max-width:420px;position:relative}
+
+    /* Step switching */
+    .step{width:100%}
+    .step.hidden{display:none}
+    @keyframes sIn   {from{opacity:0;transform:translateX(22px)} to{opacity:1;transform:translateX(0)}}
+    @keyframes sInBk {from{opacity:0;transform:translateX(-22px)}to{opacity:1;transform:translateX(0)}}
+    .step.ani-fwd {animation:sIn   .32s var(--ease) forwards}
+    .step.ani-bk  {animation:sInBk .32s var(--ease) forwards}
+
+    .fhead{margin-bottom:var(--sp6)}
+    .ftitle{font-family:var(--display);font-size:var(--2xl);font-weight:800;letter-spacing:-.04em;margin-bottom:var(--sp2)}
+    .fsub{font-size:var(--sm);color:var(--t2)}
+    .fsub a{color:var(--purple);font-weight:600;transition:color .15s}
+    .fsub a:hover{color:#a78bfa}
+
+    .alert{padding:var(--sp3) var(--sp4);border-radius:var(--r-md);font-size:var(--xs);font-weight:500;display:none;align-items:center;gap:var(--sp2);margin-bottom:var(--sp4);border:1px solid}
+    .alert.show{display:flex}
+    .alert-e{background:rgba(229,49,112,.08);border-color:rgba(229,49,112,.28);color:#f472b6}
+
+    /* Google */
+    .btn-g{width:100%;display:flex;align-items:center;justify-content:center;gap:var(--sp3);padding:var(--sp3) var(--sp5);background:var(--raised);border:1px solid var(--b2);border-radius:var(--r-md);color:var(--t1);font-size:var(--sm);font-weight:600;cursor:pointer;transition:all .2s var(--ease);margin-bottom:var(--sp5)}
+    .btn-g:hover{border-color:var(--b-purple);box-shadow:0 4px 20px rgba(127,90,240,.1);transform:translateY(-1px)}
+    .g-ico{width:20px;height:20px;flex-shrink:0}
+
+    .divider{display:flex;align-items:center;gap:var(--sp3);margin-bottom:var(--sp5);color:var(--t3);font-size:var(--xs)}
+    .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--b1)}
+
+    .fgroup{display:flex;flex-direction:column;gap:var(--sp2);margin-bottom:var(--sp4)}
+    .row2{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp3);margin-bottom:var(--sp4)}
+    .row2 .fgroup{margin-bottom:0}
+    .label{font-size:var(--xs);font-weight:600;color:var(--t2);letter-spacing:.04em}
+    .iwrap{position:relative}
+    .iico{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--t3);pointer-events:none;display:flex;align-items:center}
+    .iico svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .inp{width:100%;padding:var(--sp3) var(--sp4) var(--sp3) 40px;background:var(--input);border:1px solid var(--b1);border-radius:var(--r-md);color:var(--t1);font-size:var(--sm);font-family:var(--body);transition:all .2s var(--ease)}
+    .inp.no-ico{padding-left:var(--sp4)}
+    .inp::placeholder{color:var(--t3)}
+    .inp:focus{border-color:var(--purple);background:var(--overlay);box-shadow:0 0 0 3px rgba(127,90,240,.11)}
+    .inp.err{border-color:var(--b-err);box-shadow:0 0 0 3px rgba(229,49,112,.09)}
+    .inp.ok {border-color:var(--b-ok)}
+
+    .pw-btn{position:absolute;right:11px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--t3);display:flex;align-items:center;padding:4px;transition:color .15s}
+    .pw-btn:hover{color:var(--t2)}
+    .pw-btn svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+    /* Password strength */
+    .pw-strength{margin-top:var(--sp2);display:none}
+    .pw-bars{display:flex;gap:4px;margin-bottom:4px}
+    .pw-bar{flex:1;height:3px;border-radius:3px;background:var(--b1);transition:background .3s}
+    .pw-bar.weak  {background:#e53170}
+    .pw-bar.mid   {background:#fbbf24}
+    .pw-bar.strong{background:var(--green)}
+    .pw-lbl{font-size:var(--xs);color:var(--t3);transition:color .3s}
+
+    /* Username status */
+    .uname-status{font-size:var(--xs);margin-top:5px;display:flex;align-items:center;gap:5px;min-height:14px}
+    .uname-status.checking {color:var(--t3)}
+    .uname-status.avail    {color:#3de8a0}
+    .uname-status.taken    {color:#f472b6}
+
+    .ferr{font-size:var(--xs);color:#f472b6;display:none;align-items:center;gap:4px;margin-top:4px}
+    .ferr.show{display:flex}
+
+    /* Terms row */
+    .terms-row{display:flex;align-items:flex-start;gap:var(--sp3);margin-bottom:var(--sp5)}
+    .cb{width:16px;height:16px;border-radius:4px;border:1px solid var(--b2);background:var(--input);appearance:none;-webkit-appearance:none;cursor:pointer;position:relative;transition:all .2s;flex-shrink:0;margin-top:2px}
+    .cb:checked{background:var(--grad);border-color:transparent}
+    .cb:checked::after{content:'✓';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff;font-size:9px;font-weight:800}
+    .terms-text{font-size:var(--xs);color:var(--t2);line-height:1.65}
+    .terms-text a{color:var(--purple);font-weight:600}
+
+    /* Avatar picker */
+    .av-picker{display:flex;align-items:center;gap:var(--sp4);margin-bottom:var(--sp5)}
+    .av-circle{width:68px;height:68px;border-radius:50%;border:2px solid var(--b2);background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;color:#fff;flex-shrink:0;overflow:hidden;position:relative;cursor:pointer;transition:border-color .2s}
+    .av-circle:hover{border-color:var(--b-purple)}
+    .av-overlay{position:absolute;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;font-size:18px}
+    .av-circle:hover .av-overlay{opacity:1}
+    .av-info .av-title{font-weight:600;font-size:var(--sm);margin-bottom:3px}
+    .av-info .av-sub{font-size:var(--xs);color:var(--t3)}
+
+    /* Bio textarea */
+    .textarea{width:100%;padding:var(--sp3) var(--sp4);background:var(--input);border:1px solid var(--b1);border-radius:var(--r-md);color:var(--t1);font-size:var(--sm);font-family:var(--body);resize:vertical;min-height:78px;transition:all .2s;line-height:1.6}
+    .textarea::placeholder{color:var(--t3)}
+    .textarea:focus{border-color:var(--purple);background:var(--overlay);box-shadow:0 0 0 3px rgba(127,90,240,.11)}
+    .charcount{text-align:right;font-size:var(--xs);color:var(--t3);margin-top:4px}
+
+    /* Buttons */
+    .btn-sub{width:100%;padding:var(--sp3) var(--sp5);background:var(--grad);border:none;border-radius:var(--r-md);color:#fff;font-size:var(--base);font-weight:700;font-family:var(--body);cursor:pointer;transition:all .25s var(--ease);box-shadow:0 4px 24px rgba(127,90,240,.38);display:flex;align-items:center;justify-content:center;gap:var(--sp2);margin-bottom:var(--sp3);position:relative;overflow:hidden}
+    .btn-sub:hover{box-shadow:0 8px 36px rgba(127,90,240,.52);transform:translateY(-2px)}
+    .btn-sub:active{transform:translateY(0)}
+    .btn-sub.loading{pointer-events:none}
+    .btn-sub .spin{width:17px;height:17px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite;display:none}
+    .btn-sub.loading .btxt{display:none}
+    .btn-sub.loading .spin{display:block}
+    @keyframes sp{to{transform:rotate(360deg)}}
+
+    .btn-back{width:100%;padding:var(--sp3) var(--sp5);background:transparent;border:1px solid var(--b2);border-radius:var(--r-md);color:var(--t2);font-size:var(--sm);font-weight:600;cursor:pointer;transition:all .2s;margin-top:var(--sp2)}
+    .btn-back:hover{border-color:var(--b-purple);color:var(--t1)}
+
+    /* Success screen */
+    .success-wrap{text-align:center;padding:var(--sp6) 0}
+    .success-ico{width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,rgba(44,182,125,.18),rgba(127,90,240,.18));border:1px solid rgba(44,182,125,.28);display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto var(--sp5);animation:popIn .5s var(--bounce) forwards}
+    @keyframes popIn{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+    .success-title{font-family:var(--display);font-size:var(--2xl);font-weight:800;letter-spacing:-.04em;margin-bottom:var(--sp3)}
+    .success-sub{color:var(--t2);font-size:var(--base);line-height:1.7;margin-bottom:var(--sp6)}
+
+    .fnote{text-align:center;font-size:var(--xs);color:var(--t3);line-height:1.65}
+    .fnote a{color:var(--t2);text-decoration:underline;text-underline-offset:3px}
+
+    @media(max-width:900px){.page{grid-template-columns:1fr}.left{display:none}.right{padding:var(--sp6) var(--sp4)}.right::before{display:none}}
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ════════════════════════════════════════
+       LEFT — Your Bond Journey
+       Shows the progression path inside the app.
+       This is the "destination" view — where
+       the user will end up over time. Entirely
+       unique content not found on the landing page.
+  ════════════════════════════════════════ -->
+  <div class="left">
+    <div class="orb o1"></div>
+    <div class="orb o2"></div>
+    <div class="dots"></div>
+
+    <a href="index.html" class="logo">Syncify</a>
+
+    <div class="main">
+      <div class="panel-tag">
+        <span class="tag-dot"></span>
+        <span class="tag-text">Your journey starts now</span>
+      </div>
+
+      <h2 class="panel-h">Every great<br><span class="hl">friendship has</span><br>a beginning</h2>
+      <p class="panel-sub">Here's the path ahead. Every sync session, every shared song, every streak brings you closer to Legendary Bond.</p>
+
+      <!-- Bond progression timeline — vertical path -->
+      <div class="journey">
+
+        <div class="jstep">
+          <div class="jico" style="background:rgba(148,161,178,.1);border-color:rgba(148,161,178,.25)">🎵</div>
+          <div class="jbody">
+            <div class="jname" style="color:#94a1b2">New Vibes</div>
+            <div class="jdesc">You just joined. Share your first song. Start your first sync.</div>
+            <span class="jpts" style="color:#94a1b2;border-color:rgba(148,161,178,.2)">0 – 99 snap points</span>
+          </div>
+        </div>
+
+        <div class="jstep">
+          <div class="jico" style="background:rgba(44,182,125,.1);border-color:rgba(44,182,125,.25)">🎶</div>
+          <div class="jbody">
+            <div class="jname" style="color:#3de8a0">Music Buddy</div>
+            <div class="jdesc">You've built a rhythm. Streaks unlocked, mood rooms accessible.</div>
+            <span class="jpts" style="color:#3de8a0;border-color:rgba(44,182,125,.2)">100 – 299 pts · ×1.2 snap multiplier</span>
+          </div>
+        </div>
+
+        <div class="jstep">
+          <div class="jico" style="background:rgba(127,90,240,.1);border-color:rgba(127,90,240,.25)">🔮</div>
+          <div class="jbody">
+            <div class="jname" style="color:#a78bfa">Soul Sync</div>
+            <div class="jdesc">Deep musical compatibility. AI bond report unlocked. Memory timeline active.</div>
+            <span class="jpts" style="color:#a78bfa;border-color:rgba(127,90,240,.2)">500 – 999 pts · ×1.5 snap multiplier</span>
+          </div>
+        </div>
+
+        <div class="jstep">
+          <div class="jico" style="background:rgba(255,215,0,.1);border-color:rgba(255,215,0,.3)">👑</div>
+          <div class="jbody">
+            <div class="jname" style="color:#ffd700">Legendary Bond</div>
+            <div class="jdesc">The rarest tier. Voice memory notes, exclusive rooms, priority AI insights.</div>
+            <span class="jpts" style="color:#ffd700;border-color:rgba(255,215,0,.25)">1500+ pts · ×2.0 snap multiplier</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- What you unlock on Day 1 -->
+      <div class="unlocks">
+        <div class="unlock-title">Unlocked the moment you join</div>
+        <div class="unlock-grid">
+          <div class="unlock-item">Real-time sync engine</div>
+          <div class="unlock-item">AI compatibility score</div>
+          <div class="unlock-item">Music chat</div>
+          <div class="unlock-item">5 mood rooms</div>
+          <div class="unlock-item">Snap point system</div>
+          <div class="unlock-item">Daily streak tracking</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom">
+      <p class="bottom-note">
+        Free forever for up to 3 friends. No credit card required. Your data is never sold or used for advertising.
+      </p>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       RIGHT — 3-Step Signup Form
+  ════════════════════════════════════════ -->
+  <div class="right">
+
+    <!-- Step progress bar -->
+    <div class="progress" id="progressBar">
+      <div class="prog-pill active" id="pill1"></div>
+      <div class="prog-pill"        id="pill2"></div>
+      <div class="prog-pill"        id="pill3"></div>
+      <span class="prog-lbl" id="progLbl">Step 1 of 3</span>
+    </div>
+
+    <div class="shell">
+
+      <!-- ── STEP 1: Account ── -->
+      <div class="step ani-fwd" id="step1">
+        <div class="fhead">
+          <h2 class="ftitle">Create your account</h2>
+          <p class="fsub">Already have one? <a href="login.html">Log in →</a></p>
+        </div>
+
+        <div class="alert alert-e" id="a1" role="alert">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span id="a1txt">Something went wrong.</span>
+        </div>
+
+        <!-- Google -->
+        <button class="btn-g" id="btnGoogle" type="button">
+          <svg class="g-ico" viewBox="0 0 24 24">
+            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+          </svg>
+          Continue with Google
+        </button>
+        <div class="divider">or use email</div>
+
+        <form id="form1" novalidate>
+          <div class="row2">
+            <div class="fgroup">
+              <label class="label" for="fname">First name</label>
+              <div class="iwrap">
+                <span class="iico"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+                <input class="inp" type="text" id="fname" placeholder="Anika" autocomplete="given-name" required />
+              </div>
+              <div class="ferr" id="fnErr">Required</div>
+            </div>
+            <div class="fgroup">
+              <label class="label" for="lname">Last name</label>
+              <div class="iwrap">
+                <span class="iico"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+                <input class="inp" type="text" id="lname" placeholder="Sharma" autocomplete="family-name" required />
+              </div>
+              <div class="ferr" id="lnErr">Required</div>
+            </div>
+          </div>
+
+          <div class="fgroup">
+            <label class="label" for="email">Email address</label>
+            <div class="iwrap">
+              <span class="iico"><svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg></span>
+              <input class="inp" type="email" id="email" placeholder="you@example.com" autocomplete="email" required />
+            </div>
+            <div class="ferr" id="emErr">Enter a valid email address.</div>
+          </div>
+
+          <div class="fgroup">
+            <label class="label" for="pw">Password</label>
+            <div class="iwrap">
+              <span class="iico"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+              <input class="inp" type="password" id="pw" placeholder="At least 8 characters" autocomplete="new-password" required />
+              <button type="button" class="pw-btn" id="pwToggle">
+                <svg id="eyeIcon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+            <div class="pw-strength" id="pwStrength">
+              <div class="pw-bars"><div class="pw-bar" id="b1"></div><div class="pw-bar" id="b2"></div><div class="pw-bar" id="b3"></div><div class="pw-bar" id="b4"></div></div>
+              <div class="pw-lbl" id="pwLbl">Too short</div>
+            </div>
+            <div class="ferr" id="pwErr">Password must be at least 8 characters.</div>
+          </div>
+
+          <div class="terms-row">
+            <input type="checkbox" class="cb" id="terms" />
+            <label class="terms-text" for="terms">
+              I agree to Syncify's <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>. I confirm I'm 13 years or older.
+            </label>
+          </div>
+          <div class="ferr" id="termsErr" style="margin-bottom:var(--sp4)">You must agree to continue.</div>
+
+          <button type="submit" class="btn-sub" id="btn1">
+            <span class="btxt">Continue →</span>
+            <div class="spin"></div>
+          </button>
+        </form>
+        <p class="fnote">No credit card needed. Free forever for up to 3 friends.</p>
+      </div>
+
+      <!-- ── STEP 2: Username ── -->
+      <div class="step hidden" id="step2">
+        <div class="fhead">
+          <h2 class="ftitle">Pick your username</h2>
+          <p class="fsub">This is how friends will find you on Syncify.</p>
+        </div>
+
+        <div class="alert alert-e" id="a2" role="alert">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span id="a2txt">Something went wrong.</span>
+        </div>
+
+        <form id="form2" novalidate>
+          <div class="fgroup">
+            <label class="label" for="username">Username</label>
+            <div class="iwrap">
+              <span class="iico"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+              <input class="inp" type="text" id="username" placeholder="anika_beats" autocomplete="username" maxlength="30" required />
+            </div>
+            <div class="uname-status" id="unStatus"></div>
+            <div class="ferr" id="unErr">3–30 characters. Letters, numbers and underscores only.</div>
+          </div>
+
+          <p style="font-size:var(--xs);color:var(--t3);line-height:1.65;margin-bottom:var(--sp5)">
+            Use 3–30 characters. Letters, numbers, and underscores only (<code style="background:var(--raised);padding:1px 4px;border-radius:3px">a–z 0–9 _</code>). You can change this later in Settings.
+          </p>
+
+          <button type="submit" class="btn-sub" id="btn2">
+            <span class="btxt">Continue →</span>
+            <div class="spin"></div>
+          </button>
+          <button type="button" class="btn-back" id="back2">← Back</button>
+        </form>
+      </div>
+
+      <!-- ── STEP 3: Profile ── -->
+      <div class="step hidden" id="step3">
+        <div class="fhead">
+          <h2 class="ftitle">Set up your profile</h2>
+          <p class="fsub">Optional — skip it and do it later in Settings.</p>
+        </div>
+
+        <div class="alert alert-e" id="a3" role="alert">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span id="a3txt">Something went wrong.</span>
+        </div>
+
+        <form id="form3">
+          <!-- Avatar -->
+          <div class="av-picker">
+            <div class="av-circle" id="avCircle" onclick="document.getElementById('avFile').click()">
+              <span id="avInitials">?</span>
+              <div class="av-overlay">📷</div>
+            </div>
+            <input type="file" id="avFile" accept="image/*" style="display:none" />
+            <div class="av-info">
+              <div class="av-title">Profile photo</div>
+              <div class="av-sub">Click to upload · JPG, PNG, WebP · Max 5 MB</div>
+            </div>
+          </div>
+
+          <div class="fgroup">
+            <label class="label" for="bio">Bio <span style="color:var(--t3);font-weight:400">(optional)</span></label>
+            <textarea class="textarea" id="bio" placeholder="Tell people about your music taste... 🎵" maxlength="200"></textarea>
+            <div class="charcount"><span id="bioCount">0</span>/200</div>
+          </div>
+
+          <button type="submit" class="btn-sub" id="btn3">
+            <span class="btxt">🎵 Enter Syncify</span>
+            <div class="spin"></div>
+          </button>
+          <button type="button" class="btn-back" id="back3">← Back</button>
+        </form>
+      </div>
+
+      <!-- ── STEP 4: Success ── -->
+      <div class="step hidden" id="step4">
+        <div class="success-wrap">
+          <div class="success-ico">🎵</div>
+          <h2 class="success-title">You're in, welcome!</h2>
+          <p class="success-sub">Your account is ready. Find a friend, open a sync session, and let the music do the talking.</p>
+          <button class="btn-sub" onclick="window.location.href='dashboard.html'">
+            <span class="btxt">Go to Dashboard →</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     FIREBASE AUTH — SIGNUP LOGIC
+     Step 1: Replace firebaseConfig below with
+     YOUR values from the Firebase Console.
+═══════════════════════════════════════════ -->
+<script type="module">
+const firebaseConfig = {
+  apiKey: "AIzaSyCHVFod0I0_-fo0O0rShSJLQpe4nyNHwQk",
+  authDomain: "syncify-001.firebaseapp.com",
+  projectId: "syncify-001",
+  storageBucket: "syncify-001.firebasestorage.app",
+  messagingSenderId: "196699119630",
+  appId: "1:196699119630:web:9544ad0e5ede3db1389c5f"
+};
+
+  import { initializeApp }
+    from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+  import { getAuth, createUserWithEmailAndPassword,
+           signInWithPopup, GoogleAuthProvider,
+           updateProfile, onAuthStateChanged }
+    from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+
+  const app      = initializeApp(firebaseConfig);
+  const auth     = getAuth(app);
+  const gProv    = new GoogleAuthProvider();
+  const $        = id => document.getElementById(id);
+
+  // ─── State ───────────────────────────────
+  let currentStep  = 1;
+  let fbUser       = null;
+  let avatarFile   = null;
+  let unameOk      = false;
+
+  // ─── Step navigation ─────────────────────
+  function goTo(n, back = false) {
+    $(`step${currentStep}`).classList.add('hidden');
+    const next = $(`step${n}`);
+    next.classList.remove('hidden','ani-fwd','ani-bk');
+    void next.offsetWidth;
+    next.classList.add(back ? 'ani-bk' : 'ani-fwd');
+    currentStep = n;
+    updateBar();
+  }
+
+  function updateBar() {
+    if (currentStep >= 4) { $('progressBar').style.display = 'none'; return; }
+    $('progLbl').textContent = `Step ${currentStep} of 3`;
+    ['pill1','pill2','pill3'].forEach((id, i) => {
+      const p = $(id);
+      p.classList.remove('active','done');
+      if (i + 1 < currentStep)       p.classList.add('done');
+      else if (i + 1 === currentStep) p.classList.add('active');
+    });
+  }
+
+  // ─── Load helpers ─────────────────────────
+  const setLoad = (id, on) => $(id).classList.toggle('loading', on);
+  const showErr = (alertId, txtId, msg) => { $(txtId).textContent = msg; $(alertId).classList.add('show'); };
+  const clearErr = id => $(id).classList.remove('show');
+
+  // ─── Google Signup ────────────────────────
+  $('btnGoogle').addEventListener('click', async () => {
+    try {
+      setLoad('btn1', true);
+      const r = await signInWithPopup(auth, gProv);
+      fbUser = r.user;
+      goTo(2);
+    } catch (e) {
+      showErr('a1','a1txt', nice(e.code));
+      setLoad('btn1', false);
+    }
+  });
+
+  // ─── Password strength ────────────────────
+  $('pw').addEventListener('input', () => {
+    const v = $('pw').value;
+    const el = $('pwStrength');
+    el.style.display = v ? 'block' : 'none';
+    const score = strength(v);
+    const classes = ['','weak','mid','strong'];
+    ['b1','b2','b3','b4'].forEach((id, i) => {
+      const b = $(id); b.className = 'pw-bar';
+      if (i < score) b.classList.add(classes[score]);
+    });
+    const labels = ['Too short','Weak','Medium','Strong'];
+    const colors = ['#4a5568','#e53170','#fbbf24','#2cb67d'];
+    $('pwLbl').textContent = labels[score];
+    $('pwLbl').style.color = colors[score];
+  });
+  function strength(pw) {
+    if (pw.length < 8) return 0;
+    let s = 1;
+    if (pw.length >= 12) s++;
+    if (/[A-Z]/.test(pw) && /[0-9]/.test(pw)) s++;
+    if (/[^A-Za-z0-9]/.test(pw)) s++;
+    return Math.min(s, 3);
+  }
+
+  // Password toggle
+  $('pwToggle').addEventListener('click', () => {
+    const pw = $('pw');
+    const show = pw.type === 'password';
+    pw.type = show ? 'text' : 'password';
+    $('eyeIcon').innerHTML = show
+      ? `<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>`
+      : `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`;
+  });
+
+  // ─── STEP 1 Submit ────────────────────────
+  $('form1').addEventListener('submit', async e => {
+    e.preventDefault();
+    clearErr('a1');
+    const fn  = $('fname').value.trim();
+    const ln  = $('lname').value.trim();
+    const em  = $('email').value.trim();
+    const pw  = $('pw').value;
+    const tOk = $('terms').checked;
+    let ok = true;
+
+    const mark = (el, errId) => { el.classList.add('err'); $(errId).classList.add('show'); ok = false; };
+    if (!fn)  mark($('fname'),'fnErr');
+    if (!ln)  mark($('lname'),'lnErr');
+    if (!em || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) mark($('email'),'emErr');
+    if (!pw || pw.length < 8) mark($('pw'),'pwErr');
+    if (!tOk) { $('termsErr').classList.add('show'); ok = false; }
+    if (!ok) return;
+
+    try {
+      setLoad('btn1', true);
+      const cred = await createUserWithEmailAndPassword(auth, em, pw);
+      fbUser = cred.user;
+      await updateProfile(fbUser, { displayName: `${fn} ${ln}` });
+      goTo(2);
+    } catch (err) {
+      showErr('a1','a1txt', nice(err.code));
+      setLoad('btn1', false);
+    }
+  });
+
+  // Clear errors on input
+  ['fname','lname','email','pw'].forEach(id => {
+    $(id).addEventListener('input', () => {
+      $(id).classList.remove('err');
+      const map = { fname:'fnErr', lname:'lnErr', email:'emErr', pw:'pwErr' };
+      $(map[id]).classList.remove('show');
+    });
+  });
+
+  // ─── STEP 2: Username ─────────────────────
+  let unTimer;
+  $('username').addEventListener('input', () => {
+    clearTimeout(unTimer);
+    const val = $('username').value.trim();
+    const st  = $('unStatus');
+    st.className = 'uname-status';
+    $('unErr').classList.remove('show');
+    unameOk = false;
+    if (!val) { st.textContent = ''; return; }
+    if (!/^[a-zA-Z0-9_]{3,30}$/.test(val)) {
+      st.className = 'uname-status taken';
+      st.textContent = '✗ Invalid format';
+      return;
+    }
+    st.className = 'uname-status checking';
+    st.textContent = 'Checking availability…';
+    unTimer = setTimeout(() => checkUsername(val), 600);
+  });
+
+  async function checkUsername(val) {
+    await new Promise(r => setTimeout(r, 400)); // simulated API call
+    // In production, replace with: fetch(`/api/users/check-username?u=${val}`)
+    const reserved = ['admin','syncify','test','root','support','help'];
+    const taken = reserved.includes(val.toLowerCase());
+    const st = $('unStatus');
+    if (taken) {
+      st.className = 'uname-status taken';
+      st.textContent = '✗ Username already taken';
+      unameOk = false;
+    } else {
+      st.className = 'uname-status avail';
+      st.textContent = '✓ Available!';
+      unameOk = true;
+    }
+  }
+
+  $('form2').addEventListener('submit', async e => {
+    e.preventDefault();
+    clearErr('a2');
+    const val = $('username').value.trim();
+    if (!val || !/^[a-zA-Z0-9_]{3,30}$/.test(val)) { $('unErr').classList.add('show'); return; }
+    if (!unameOk) { showErr('a2','a2txt','That username is not available. Please choose another.'); return; }
+
+    setLoad('btn2', true);
+    try {
+      // Register on backend
+      if (fbUser) {
+        const token = await fbUser.getIdToken();
+        try {
+          await fetch('/api/auth/login', {
+            method:'POST', headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({ token })
+          });
+        } catch { /* backend offline in dev */ }
+      }
+      goTo(3);
+    } finally {
+      setLoad('btn2', false);
+    }
+  });
+
+  $('back2').addEventListener('click', () => goTo(1, true));
+
+  // ─── STEP 3: Profile setup ────────────────
+  // Avatar preview
+  $('avFile').addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) { showErr('a3','a3txt','Image must be under 5 MB.'); return; }
+    avatarFile = file;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      $('avInitials').style.display = 'none';
+      const img = document.createElement('img');
+      img.src = ev.target.result;
+      Object.assign(img.style, { width:'100%', height:'100%', objectFit:'cover', position:'absolute', inset:'0' });
+      $('avCircle').appendChild(img);
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // Bio counter
+  $('bio').addEventListener('input', function() { $('bioCount').textContent = this.value.length; });
+
+  // Set initials from displayName
+  onAuthStateChanged(auth, user => {
+    if (user?.displayName) {
+      const parts = user.displayName.split(' ');
+      $('avInitials').textContent = ((parts[0]?.[0] || '') + (parts[1]?.[0] || '')).toUpperCase() || '?';
+    }
+    if (user?.displayName && !$('username').value) {
+      const sug = user.displayName.toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'').slice(0,25);
+      $('username').value = sug;
+      if (sug.length >= 3) checkUsername(sug);
+    }
+  });
+
+  $('form3').addEventListener('submit', async e => {
+    e.preventDefault();
+    clearErr('a3');
+    setLoad('btn3', true);
+    try {
+      if (fbUser) {
+        const token = await fbUser.getIdToken();
+        const un  = $('username').value.trim();
+        const bio = $('bio').value.trim();
+        try {
+          await fetch('/api/auth/setup-profile', {
+            method:'PUT',
+            headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${localStorage.getItem('syncify_jwt')||''}` },
+            body: JSON.stringify({ username: un, bio })
+          });
+        } catch { /* backend offline */ }
+      }
+      goTo(4);
+    } catch {
+      showErr('a3','a3txt','Failed to save profile. Please try again.');
+    } finally {
+      setLoad('btn3', false);
+    }
+  });
+
+  $('back3').addEventListener('click', () => goTo(2, true));
+
+  // ─── Handle ?step=profile redirect ────────
+  if (new URLSearchParams(location.search).get('step') === 'profile') {
+    onAuthStateChanged(auth, user => { if (user) { fbUser = user; goTo(2); } });
+  }
+
+  function nice(code) {
+    return ({
+      'auth/email-already-in-use'  : 'An account with this email already exists.',
+      'auth/invalid-email'         : 'Please enter a valid email address.',
+      'auth/weak-password'         : 'Password should be at least 8 characters.',
+      'auth/too-many-requests'     : 'Too many attempts. Please wait a moment.',
+      'auth/popup-closed-by-user'  : 'Google sign-in was cancelled.',
+      'auth/network-request-failed': 'Network error — check your connection.',
+    })[code] || 'Something went wrong. Please try again.';
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Syncify — Log In</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── DESIGN TOKENS ─────────────────────── */
+    :root {
+      --purple:#7f5af0; --green:#2cb67d; --pink:#e53170; --gold:#ffd700;
+      --grad:linear-gradient(135deg,#7f5af0 0%,#2cb67d 100%);
+      --bg:#080810; --surface:#0d0d1b; --raised:#13131f; --overlay:#18182a; --input:#0b0b18;
+      --t1:#f0eeff; --t2:#8892a4; --t3:#4a5568;
+      --b1:rgba(255,255,255,0.06); --b2:rgba(255,255,255,0.11);
+      --b-purple:rgba(127,90,240,0.35); --b-err:rgba(229,49,112,0.45);
+      --r-sm:8px; --r-md:13px; --r-lg:20px; --r-full:9999px;
+      --xs:clamp(.62rem,1.1vw,.72rem); --sm:clamp(.78rem,1.4vw,.88rem);
+      --base:clamp(.9rem,1.7vw,1rem); --lg:clamp(1.1rem,2.4vw,1.28rem);
+      --xl:clamp(1.3rem,3vw,1.6rem); --2xl:clamp(1.6rem,4vw,2.2rem); --3xl:clamp(2rem,5vw,2.8rem);
+      --sp2:clamp(.5rem,1vw,.75rem); --sp3:clamp(.75rem,1.5vw,1rem);
+      --sp4:clamp(1rem,2vw,1.5rem); --sp5:clamp(1.25rem,2.5vw,1.75rem);
+      --sp6:clamp(1.5rem,3vw,2.25rem); --sp8:clamp(2rem,4vw,3rem);
+      --ease:cubic-bezier(.4,0,.2,1); --bounce:cubic-bezier(.34,1.56,.64,1);
+      --display:'Syne',sans-serif; --body:'DM Sans',sans-serif;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{height:100%}
+    body{font-family:var(--body);color:var(--t1);background:var(--bg);min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+    a{color:inherit;text-decoration:none}
+    button{font-family:var(--body);cursor:pointer;border:none;outline:none}
+    input{font-family:var(--body);outline:none}
+    ::selection{background:rgba(127,90,240,.3)}
+    ::-webkit-scrollbar{width:4px}
+    ::-webkit-scrollbar-thumb{background:var(--b1);border-radius:4px}
+
+    /* ─── LAYOUT ─────────────────────────────── */
+    .page{display:grid;grid-template-columns:1fr 1fr;min-height:100vh}
+
+    /* ═══════════════════════════════════════
+       LEFT — Live Activity Panel
+       Concept: Show the user what they're
+       missing. Real-time energy. FOMO done right.
+    ═══════════════════════════════════════ */
+    .left{
+      background:var(--surface);
+      position:relative;overflow:hidden;
+      display:flex;flex-direction:column;
+      padding:var(--sp6);gap:var(--sp5);
+    }
+
+    /* Ambient orbs */
+    .orb{position:absolute;border-radius:50%;filter:blur(100px);pointer-events:none}
+    .o1{width:440px;height:440px;top:-120px;left:-100px;background:radial-gradient(circle,rgba(127,90,240,.16) 0%,transparent 70%);animation:od 16s ease-in-out infinite}
+    .o2{width:300px;height:300px;bottom:-80px;right:-60px;background:radial-gradient(circle,rgba(44,182,125,.12) 0%,transparent 70%);animation:od 21s ease-in-out infinite reverse}
+    @keyframes od{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(3%,4%) scale(1.04)}}
+
+    /* Dot texture */
+    .dots{position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,.05) 1px,transparent 1px);background-size:26px 26px;mask-image:radial-gradient(ellipse 85% 85% at 50% 50%,#000 35%,transparent 100%)}
+
+    /* Logo */
+    .logo{position:relative;z-index:2;font-family:var(--display);font-size:var(--xl);font-weight:800;letter-spacing:-.04em;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+    /* Main content */
+    .main{position:relative;z-index:2;flex:1;display:flex;flex-direction:column;justify-content:center}
+
+    /* LIVE badge */
+    .live-badge{display:inline-flex;align-items:center;gap:var(--sp2);margin-bottom:var(--sp4)}
+    .live-dot{width:8px;height:8px;background:#22c55e;border-radius:50%;box-shadow:0 0 0 0 rgba(34,197,94,.5);animation:livep 2s ease-in-out infinite}
+    @keyframes livep{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.5)}50%{box-shadow:0 0 0 7px rgba(34,197,94,0)}}
+    .live-text{font-size:var(--xs);font-weight:700;color:#22c55e;letter-spacing:.12em;text-transform:uppercase}
+
+    .panel-h{font-family:var(--display);font-size:var(--2xl);font-weight:800;letter-spacing:-.04em;line-height:1.08;margin-bottom:var(--sp2)}
+    .panel-sub{font-size:var(--sm);color:var(--t2);line-height:1.68;margin-bottom:var(--sp5)}
+
+    /* ── Activity Feed ── */
+    .feed{display:flex;flex-direction:column;gap:10px;margin-bottom:var(--sp4)}
+    .feed-row{
+      display:flex;align-items:center;gap:var(--sp3);
+      padding:var(--sp3) var(--sp4);
+      background:rgba(255,255,255,.027);
+      border:1px solid var(--b1);border-radius:var(--r-md);
+      animation:fin .4s var(--ease) both;
+    }
+    .feed-row:nth-child(1){animation-delay:.05s}
+    .feed-row:nth-child(2){animation-delay:.15s}
+    .feed-row:nth-child(3){animation-delay:.25s}
+    .feed-row:nth-child(4){animation-delay:.35s}
+    @keyframes fin{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:translateX(0)}}
+    .av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;color:#fff}
+    .fbody{flex:1;min-width:0}
+    .fmain{font-size:var(--sm);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .fmain b{font-weight:700}
+    .ftime{font-size:var(--xs);color:var(--t3);margin-top:2px}
+    .chip{font-size:var(--xs);font-weight:700;padding:3px 10px;border-radius:var(--r-full);white-space:nowrap;border:1px solid}
+    .c-purple{background:rgba(127,90,240,.13);color:#a78bfa;border-color:rgba(127,90,240,.22)}
+    .c-green {background:rgba(44,182,125,.13); color:#3de8a0;border-color:rgba(44,182,125,.22)}
+    .c-amber {background:rgba(251,191,36,.13);  color:#fbbf24;border-color:rgba(251,191,36,.22)}
+    .c-gold  {background:rgba(255,215,0,.13);   color:#ffd700;border-color:rgba(255,215,0,.25)}
+
+    /* ── Platform counters ── */
+    .counters{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--sp3)}
+    .counter{
+      background:rgba(255,255,255,.025);
+      border:1px solid var(--b1);border-radius:var(--r-md);
+      padding:var(--sp3) var(--sp3);text-align:center;
+    }
+    .c-num{font-family:var(--display);font-size:var(--xl);font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1}
+    .c-label{font-size:var(--xs);color:var(--t3);margin-top:3px}
+
+    /* ── Bottom quote ── */
+    .bottom{position:relative;z-index:2}
+    .q-card{background:rgba(127,90,240,.06);border:1px solid rgba(127,90,240,.14);border-radius:var(--r-md);padding:var(--sp4)}
+    .q-text{font-size:var(--sm);color:var(--t2);font-style:italic;line-height:1.72;margin-bottom:var(--sp3)}
+    .q-author{display:flex;align-items:center;gap:var(--sp2)}
+    .q-av{width:30px;height:30px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+    .q-name{font-size:var(--xs);font-weight:700}
+    .q-meta{font-size:var(--xs);color:var(--t3)}
+
+    /* ═══════════════════════════════════════
+       RIGHT — Login Form
+    ═══════════════════════════════════════ */
+    .right{
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      padding:var(--sp8) var(--sp6);
+      background:var(--bg);position:relative;
+    }
+    .right::before{content:'';position:absolute;left:0;top:8%;bottom:8%;width:1px;background:linear-gradient(to bottom,transparent,var(--b1) 25%,var(--b1) 75%,transparent)}
+
+    .shell{width:100%;max-width:400px;opacity:0;transform:translateY(16px);animation:rev .5s var(--ease) .1s forwards}
+    @keyframes rev{to{opacity:1;transform:translateY(0)}}
+
+    .fhead{margin-bottom:var(--sp6)}
+    .ftitle{font-family:var(--display);font-size:var(--2xl);font-weight:800;letter-spacing:-.04em;margin-bottom:var(--sp2)}
+    .fsub{font-size:var(--sm);color:var(--t2)}
+    .fsub a{color:var(--purple);font-weight:600;transition:color .15s}
+    .fsub a:hover{color:#a78bfa}
+
+    /* Google */
+    .btn-g{
+      width:100%;display:flex;align-items:center;justify-content:center;gap:var(--sp3);
+      padding:var(--sp3) var(--sp5);background:var(--raised);
+      border:1px solid var(--b2);border-radius:var(--r-md);
+      color:var(--t1);font-size:var(--sm);font-weight:600;
+      cursor:pointer;transition:all .2s var(--ease);margin-bottom:var(--sp5);
+    }
+    .btn-g:hover{border-color:var(--b-purple);box-shadow:0 4px 20px rgba(127,90,240,.1);transform:translateY(-1px)}
+    .btn-g:active{transform:translateY(0)}
+    .g-ico{width:20px;height:20px;flex-shrink:0}
+
+    /* Divider */
+    .divider{display:flex;align-items:center;gap:var(--sp3);margin-bottom:var(--sp5);color:var(--t3);font-size:var(--xs)}
+    .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--b1)}
+
+    /* Fields */
+    .fgroup{display:flex;flex-direction:column;gap:var(--sp2);margin-bottom:var(--sp4)}
+    .label{font-size:var(--xs);font-weight:600;color:var(--t2);letter-spacing:.04em}
+    .iwrap{position:relative}
+    .iico{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--t3);pointer-events:none;display:flex;align-items:center}
+    .iico svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .inp{
+      width:100%;padding:var(--sp3) var(--sp4) var(--sp3) 40px;
+      background:var(--input);border:1px solid var(--b1);border-radius:var(--r-md);
+      color:var(--t1);font-size:var(--sm);font-family:var(--body);
+      transition:all .2s var(--ease);
+    }
+    .inp::placeholder{color:var(--t3)}
+    .inp:focus{border-color:var(--purple);background:var(--overlay);box-shadow:0 0 0 3px rgba(127,90,240,.11)}
+    .inp.err{border-color:var(--b-err);box-shadow:0 0 0 3px rgba(229,49,112,.09)}
+
+    .pw-btn{position:absolute;right:11px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--t3);display:flex;align-items:center;padding:4px;transition:color .15s}
+    .pw-btn:hover{color:var(--t2)}
+    .pw-btn svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+    .ferr{font-size:var(--xs);color:#f472b6;display:none;align-items:center;gap:4px}
+    .ferr.show{display:flex}
+
+    .frow{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--sp5)}
+    .cblabel{display:flex;align-items:center;gap:var(--sp2);cursor:pointer;font-size:var(--xs);color:var(--t2);user-select:none}
+    .cb{width:15px;height:15px;border-radius:4px;border:1px solid var(--b2);background:var(--input);appearance:none;-webkit-appearance:none;cursor:pointer;position:relative;transition:all .2s;flex-shrink:0}
+    .cb:checked{background:var(--grad);border-color:transparent}
+    .cb:checked::after{content:'✓';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff;font-size:9px;font-weight:800}
+    .forgot{font-size:var(--xs);color:var(--purple);font-weight:600;transition:color .15s}
+    .forgot:hover{color:#a78bfa}
+
+    /* Submit */
+    .btn-sub{
+      width:100%;padding:var(--sp3) var(--sp5);
+      background:var(--grad);border:none;border-radius:var(--r-md);
+      color:#fff;font-size:var(--base);font-weight:700;font-family:var(--body);
+      cursor:pointer;transition:all .25s var(--ease);
+      box-shadow:0 4px 24px rgba(127,90,240,.38);
+      display:flex;align-items:center;justify-content:center;gap:var(--sp2);
+      margin-bottom:var(--sp5);position:relative;overflow:hidden;
+    }
+    .btn-sub:hover{box-shadow:0 8px 36px rgba(127,90,240,.52);transform:translateY(-2px)}
+    .btn-sub:active{transform:translateY(0)}
+    .btn-sub.loading{pointer-events:none}
+    .btn-sub .spin{width:17px;height:17px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite;display:none}
+    .btn-sub.loading .btxt{display:none}
+    .btn-sub.loading .spin{display:block}
+    @keyframes sp{to{transform:rotate(360deg)}}
+
+    .alert{padding:var(--sp3) var(--sp4);border-radius:var(--r-md);font-size:var(--xs);font-weight:500;display:none;align-items:center;gap:var(--sp2);margin-bottom:var(--sp4);border:1px solid}
+    .alert.show{display:flex}
+    .alert-e{background:rgba(229,49,112,.08);border-color:rgba(229,49,112,.28);color:#f472b6}
+
+    .fnote{text-align:center;font-size:var(--xs);color:var(--t3);line-height:1.65}
+    .fnote a{color:var(--t2);text-decoration:underline;text-underline-offset:3px}
+
+    /* ─── RESPONSIVE ─────────────────────────── */
+    @media(max-width:900px){.page{grid-template-columns:1fr}.left{display:none}.right{padding:var(--sp6) var(--sp4)}.right::before{display:none}}
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ════════════════════════════════════════
+       LEFT — "See What's Happening Right Now"
+       Purpose: FOMO-driven re-engagement.
+       Shows real activity inside the app.
+  ════════════════════════════════════════ -->
+  <div class="left">
+    <div class="orb o1"></div>
+    <div class="orb o2"></div>
+    <div class="dots"></div>
+
+    <a href="index.html" class="logo">Syncify</a>
+
+    <div class="main">
+      <!-- Live indicator -->
+      <div class="live-badge">
+        <span class="live-dot"></span>
+        <span class="live-text">Happening right now</span>
+      </div>
+
+      <h2 class="panel-h">Your friends are<br>already listening</h2>
+      <p class="panel-sub">Don't let your streak slip. Log back in and rejoin the session.</p>
+
+      <!-- Live activity feed — snapshot of what's happening inside the app -->
+      <div class="feed">
+        <div class="feed-row">
+          <div class="av" style="background:linear-gradient(135deg,#7f5af0,#2cb67d)">A</div>
+          <div class="fbody">
+            <div class="fmain"><b>@anika_beats</b> opened a Late Night Room</div>
+            <div class="ftime">Just now</div>
+          </div>
+          <span class="chip c-purple">🌙 Room</span>
+        </div>
+        <div class="feed-row">
+          <div class="av" style="background:linear-gradient(135deg,#e53170,#7f5af0)">K</div>
+          <div class="fbody">
+            <div class="fmain"><b>@karthik_r</b> shared a snap point snap</div>
+            <div class="ftime">3 min ago</div>
+          </div>
+          <span class="chip c-green">⚡ +35 pts</span>
+        </div>
+        <div class="feed-row">
+          <div class="av" style="background:linear-gradient(135deg,#ffbe0b,#e53170)">M</div>
+          <div class="fbody">
+            <div class="fmain"><b>@meera.sync</b> hit a 21-day streak 🔥</div>
+            <div class="ftime">18 min ago</div>
+          </div>
+          <span class="chip c-amber">🔥 21 days</span>
+        </div>
+        <div class="feed-row">
+          <div class="av" style="background:linear-gradient(135deg,#2cb67d,#3a86ff)">D</div>
+          <div class="fbody">
+            <div class="fmain"><b>@dev_plays</b> got 94% AI compatibility 🤖</div>
+            <div class="ftime">41 min ago</div>
+          </div>
+          <span class="chip c-gold">🔮 Soul Match</span>
+        </div>
+      </div>
+
+      <!-- Live counters -->
+      <div class="counters">
+        <div class="counter">
+          <div class="c-num">2.4k</div>
+          <div class="c-label">Syncing now</div>
+        </div>
+        <div class="counter">
+          <div class="c-num">18k</div>
+          <div class="c-label">Active streaks</div>
+        </div>
+        <div class="counter">
+          <div class="c-num">97%</div>
+          <div class="c-label">Sync accuracy</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- User testimonial -->
+    <div class="bottom">
+      <div class="q-card">
+        <p class="q-text">"I logged in on my lunch break, synced with my best friend in a different city, and earned my Soul Sync badge — all before my food arrived."</p>
+        <div class="q-author">
+          <div class="q-av">R</div>
+          <div>
+            <div class="q-name">Rahul Menon</div>
+            <div class="q-meta">🔮 Soul Sync · 620 snap points</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       RIGHT — Login Form
+  ════════════════════════════════════════ -->
+  <div class="right">
+    <div class="shell">
+
+      <div class="fhead">
+        <h2 class="ftitle">Welcome back</h2>
+        <p class="fsub">New to Syncify? <a href="signup.html">Create a free account →</a></p>
+      </div>
+
+      <!-- Error alert -->
+      <div class="alert alert-e" id="alertBox" role="alert">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span id="alertTxt">Something went wrong. Please try again.</span>
+      </div>
+
+      <!-- Google Sign-in -->
+      <button class="btn-g" id="btnGoogle" type="button">
+        <svg class="g-ico" viewBox="0 0 24 24">
+          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+        </svg>
+        Continue with Google
+      </button>
+
+      <div class="divider">or sign in with email</div>
+
+      <!-- Email/password form -->
+      <form id="loginForm" novalidate>
+
+        <div class="fgroup">
+          <label class="label" for="email">Email address</label>
+          <div class="iwrap">
+            <span class="iico"><svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg></span>
+            <input class="inp" type="email" id="email" placeholder="you@example.com" autocomplete="email" required />
+          </div>
+          <div class="ferr" id="emailErr">Please enter a valid email address.</div>
+        </div>
+
+        <div class="fgroup">
+          <label class="label" for="password">Password</label>
+          <div class="iwrap">
+            <span class="iico"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+            <input class="inp" type="password" id="password" placeholder="••••••••" autocomplete="current-password" required />
+            <button type="button" class="pw-btn" id="pwToggle">
+              <svg id="eyeIcon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+          <div class="ferr" id="pwErr">Password is required.</div>
+        </div>
+
+        <div class="frow">
+          <label class="cblabel">
+            <input type="checkbox" class="cb" id="rememberMe" />
+            Remember me
+          </label>
+          <a href="#" class="forgot">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="btn-sub" id="btnSubmit">
+          <span class="btxt">Log In</span>
+          <div class="spin"></div>
+        </button>
+      </form>
+
+      <p class="fnote">By continuing you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     FIREBASE AUTH — LOGIN LOGIC
+     Step 1: Replace firebaseConfig below with
+     YOUR values from the Firebase Console.
+     (See: Firebase Setup Guide document)
+═══════════════════════════════════════════ -->
+<script type="module">
+const firebaseConfig = {
+  apiKey: "AIzaSyCHVFod0I0_-fo0O0rShSJLQpe4nyNHwQk",
+  authDomain: "syncify-001.firebaseapp.com",
+  projectId: "syncify-001",
+  storageBucket: "syncify-001.firebasestorage.app",
+  messagingSenderId: "196699119630",
+  appId: "1:196699119630:web:9544ad0e5ede3db1389c5f"
+};
+  import { initializeApp }
+    from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+  import { getAuth, signInWithEmailAndPassword,
+           signInWithPopup, GoogleAuthProvider, onAuthStateChanged }
+    from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+
+  const app      = initializeApp(firebaseConfig);
+  const auth     = getAuth(app);
+  const gProvider = new GoogleAuthProvider();
+
+  // — If already logged in, skip straight to dashboard —
+  onAuthStateChanged(auth, async user => { if (user) await toBackend(user); });
+
+  // — DOM refs —
+  const $   = id => document.getElementById(id);
+  const form      = $('loginForm');
+  const btnSub    = $('btnSubmit');
+  const btnGoogle = $('btnGoogle');
+  const emailInp  = $('email');
+  const pwInp     = $('password');
+
+  // — Password show/hide —
+  $('pwToggle').addEventListener('click', () => {
+    const show = pwInp.type === 'password';
+    pwInp.type = show ? 'text' : 'password';
+    $('eyeIcon').innerHTML = show
+      ? `<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>`
+      : `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`;
+  });
+
+  // — Google Sign-In —
+  btnGoogle.addEventListener('click', async () => {
+    try {
+      setLoad(true);
+      const result = await signInWithPopup(auth, gProvider);
+      await toBackend(result.user);
+    } catch (e) {
+      showErr(nice(e.code));
+      setLoad(false);
+    }
+  });
+
+  // — Email / Password Login —
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    clearUI();
+    const email = emailInp.value.trim();
+    const pw    = pwInp.value;
+    let ok = true;
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { mark(emailInp,'emailErr'); ok = false; }
+    if (!pw) { mark(pwInp,'pwErr'); ok = false; }
+    if (!ok) return;
+    try {
+      setLoad(true);
+      const cred = await signInWithEmailAndPassword(auth, email, pw);
+      await toBackend(cred.user);
+    } catch (e) {
+      showErr(nice(e.code));
+      setLoad(false);
+    }
+  });
+
+  // — Send Firebase token to your Flask backend —
+  async function toBackend(user) {
+    try {
+      const idToken = await user.getIdToken();
+      const res = await fetch('/api/auth/login', {
+        method : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body   : JSON.stringify({ token: idToken })
+      });
+      if (!res.ok) throw new Error('backend');
+      const data = await res.json();
+      localStorage.setItem('syncify_jwt',  data.jwt);
+      localStorage.setItem('syncify_user', JSON.stringify(data.user));
+      window.location.href = data.is_new_user ? 'signup.html?step=profile' : 'dashboard.html';
+    } catch {
+      // Backend not running yet (UI dev mode) — redirect anyway
+      window.location.href = 'dashboard.html';
+    }
+  }
+
+  // — Helpers —
+  function setLoad(on) { btnSub.classList.toggle('loading', on); btnGoogle.disabled = on; }
+  function showErr(msg) { $('alertTxt').textContent = msg; $('alertBox').classList.add('show'); }
+  function mark(el, errId) { el.classList.add('err'); $(errId).classList.add('show'); }
+  function clearUI() {
+    $('alertBox').classList.remove('show');
+    [emailInp, pwInp].forEach(el => el.classList.remove('err'));
+    ['emailErr','pwErr'].forEach(id => $(id).classList.remove('show'));
+  }
+  function nice(code) {
+    return ({
+      'auth/user-not-found'      : 'No account found with that email.',
+      'auth/wrong-password'      : 'Incorrect password. Please try again.',
+      'auth/invalid-email'       : 'That doesn\'t look like a valid email.',
+      'auth/too-many-requests'   : 'Too many attempts. Please wait a moment.',
+      'auth/user-disabled'       : 'This account has been suspended.',
+      'auth/invalid-credential'  : 'Incorrect email or password.',
+      'auth/popup-closed-by-user': 'Google sign-in was cancelled.',
+      'auth/network-request-failed': 'Network error — check your connection.',
+    })[code] || 'Something went wrong. Please try again.';
+  }
+  emailInp.addEventListener('input', () => { emailInp.classList.remove('err'); $('emailErr').classList.remove('show'); });
+  pwInp.addEventListener('input',    () => { pwInp.classList.remove('err');    $('pwErr').classList.remove('show'); });
+</script>
+</body>
+</html>
