@@ -5,185 +5,1528 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Syncify — Dashboard</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <style>
+    /* ═══════════════════════════════════════
+       DESIGN TOKENS
+    ═══════════════════════════════════════ */
     :root {
-      --purple:#7f5af0; --green:#2cb67d; --pink:#e53170;
-      --grad:linear-gradient(135deg,#7f5af0,#2cb67d);
-      --bg:#080810; --surface:#0d0d1b; --raised:#13131f;
-      --t1:#f0eeff; --t2:#8892a4; --t3:#4a5568;
-      --b1:rgba(255,255,255,0.06); --b2:rgba(255,255,255,0.11);
-      --r-md:13px; --r-lg:20px; --r-full:9999px;
-      --display:'Syne',sans-serif; --body:'DM Sans',sans-serif;
+      --purple: #7f5af0;
+      --green:  #2cb67d;
+      --pink:   #e53170;
+      --gold:   #ffd700;
+      --grad:   linear-gradient(135deg, #7f5af0, #2cb67d);
+
+      --bg:      #080810;
+      --surface: #0e0e1a;
+      --raised:  #141422;
+      --overlay: #1a1a2e;
+
+      --t1: #f0eeff;
+      --t2: #8892a4;
+      --t3: #4a5568;
+
+      --b1: rgba(255,255,255,0.06);
+      --b2: rgba(255,255,255,0.10);
+      --b3: rgba(255,255,255,0.16);
+      --b-purple: rgba(127,90,240,0.30);
+
+      --r-sm:   8px;
+      --r-md:   13px;
+      --r-lg:   20px;
+      --r-xl:   28px;
+      --r-full: 9999px;
+
+      /* clamp() spacing */
+      --s1: clamp(0.25rem,0.5vw,0.5rem);
+      --s2: clamp(0.5rem,1vw,0.75rem);
+      --s3: clamp(0.75rem,1.5vw,1rem);
+      --s4: clamp(1rem,2vw,1.5rem);
+      --s5: clamp(1.25rem,2.5vw,1.75rem);
+      --s6: clamp(1.5rem,3vw,2rem);
+      --s8: clamp(2rem,4vw,3rem);
+
+      /* clamp() type */
+      --t-xs:  clamp(0.62rem,1.1vw,0.72rem);
+      --t-sm:  clamp(0.78rem,1.4vw,0.88rem);
+      --t-base:clamp(0.9rem,1.7vw,1rem);
+      --t-md:  clamp(1rem,2vw,1.15rem);
+      --t-lg:  clamp(1.1rem,2.5vw,1.3rem);
+      --t-xl:  clamp(1.3rem,3vw,1.6rem);
+      --t-2xl: clamp(1.6rem,4vw,2.2rem);
+      --t-3xl: clamp(2rem,5vw,2.8rem);
+
+      --nav-w:      240px;
+      --header-h:   60px;
+      --player-h:   76px;
+      --mobile-nav: 68px;
+
+      --ease:   cubic-bezier(0.4,0,0.2,1);
+      --bounce: cubic-bezier(0.34,1.56,0.64,1);
+      --display:'Syne',sans-serif;
+      --body:   'DM Sans',sans-serif;
     }
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:var(--body);color:var(--t1);background:var(--bg);min-height:100vh;-webkit-font-smoothing:antialiased}
-    a{color:inherit;text-decoration:none}
-    button{font-family:var(--body);cursor:pointer;border:none;outline:none}
 
-    /* Nav */
-    .nav{
-      position:fixed;top:0;left:0;right:0;z-index:100;
-      height:64px;display:flex;align-items:center;
-      background:rgba(8,8,16,0.85);backdrop-filter:blur(24px);
-      border-bottom:1px solid var(--b1);padding:0 24px;
-      justify-content:space-between;
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { height: 100%; }
+    body {
+      font-family: var(--body);
+      color: var(--t1);
+      background: var(--bg);
+      height: 100vh;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
     }
-    .nav-logo{font-family:var(--display);font-size:1.3rem;font-weight:800;letter-spacing:-.04em;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-    .nav-right{display:flex;align-items:center;gap:12px}
-    .nav-user{display:flex;align-items:center;gap:10px;font-size:.85rem;color:var(--t2)}
-    .nav-av{width:32px;height:32px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;overflow:hidden}
-    .nav-av img{width:100%;height:100%;object-fit:cover}
-    .btn-logout{background:transparent;border:1px solid var(--b1);border-radius:var(--r-full);padding:6px 16px;font-size:.78rem;color:var(--t2);transition:all .2s}
-    .btn-logout:hover{border-color:var(--b2);color:var(--t1)}
+    a { color: inherit; text-decoration: none; }
+    button { font-family: var(--body); cursor: pointer; border: none; outline: none; }
+    ::selection { background: rgba(127,90,240,0.3); }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-thumb { background: var(--b2); border-radius: 4px; }
 
-    /* Main */
-    .main{padding-top:64px;min-height:100vh}
-    .content{max-width:900px;margin:0 auto;padding:40px 24px}
-
-    /* Welcome */
-    .welcome{margin-bottom:32px}
-    .welcome-greeting{font-size:.78rem;font-weight:700;color:var(--green);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
-    .welcome-title{font-family:var(--display);font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;letter-spacing:-.04em;line-height:1.1}
-    .welcome-title span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-
-    /* Stats */
-    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:32px}
-    .stat-card{
-      background:var(--surface);border:1px solid var(--b1);border-radius:var(--r-lg);
-      padding:20px;transition:all .25s;
+    /* ═══════════════════════════════════════
+       APP SHELL LAYOUT
+    ═══════════════════════════════════════ */
+    .app-shell {
+      display: grid;
+      grid-template-columns: var(--nav-w) 1fr;
+      grid-template-rows: var(--header-h) 1fr var(--player-h);
+      grid-template-areas:
+        "sidebar header"
+        "sidebar main"
+        "sidebar player";
+      height: 100vh;
+      width: 100vw;
     }
-    .stat-card:hover{border-color:var(--b2);transform:translateY(-3px)}
-    .stat-label{font-size:.72rem;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
-    .stat-value{font-family:var(--display);font-size:1.8rem;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1}
-    .stat-sub{font-size:.72rem;color:var(--t3);margin-top:4px}
 
-    /* Quick actions */
-    .section-title{font-family:var(--display);font-size:1.1rem;font-weight:700;margin-bottom:16px;letter-spacing:-.02em}
-    .actions{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:32px}
-    .action-btn{
-      background:var(--surface);border:1px solid var(--b1);border-radius:var(--r-lg);
-      padding:20px;display:flex;align-items:center;gap:14px;
-      cursor:pointer;transition:all .25s;text-align:left;color:var(--t1);
+    /* ═══════════════════════════════════════
+       SIDEBAR
+    ═══════════════════════════════════════ */
+    .sidebar {
+      grid-area: sidebar;
+      background: var(--surface);
+      border-right: 1px solid var(--b1);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+      z-index: 50;
     }
-    .action-btn:hover{border-color:rgba(127,90,240,.35);box-shadow:0 8px 30px rgba(127,90,240,.1);transform:translateY(-2px)}
-    .action-ico{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
-    .action-name{font-weight:700;font-size:.9rem;margin-bottom:2px}
-    .action-desc{font-size:.75rem;color:var(--t2)}
 
-    /* Auth status */
-    .auth-card{
-      background:rgba(44,182,125,.06);border:1px solid rgba(44,182,125,.2);
-      border-radius:var(--r-lg);padding:20px;margin-bottom:32px;
-      display:flex;align-items:center;gap:14px;
+    /* Ambient glow top */
+    .sidebar::before {
+      content: '';
+      position: absolute;
+      top: -60px; left: -60px;
+      width: 220px; height: 220px;
+      background: radial-gradient(circle, rgba(127,90,240,0.08) 0%, transparent 70%);
+      pointer-events: none;
     }
-    .auth-ico{font-size:22px}
-    .auth-label{font-size:.78rem;font-weight:700;color:#3de8a0;margin-bottom:2px}
-    .auth-detail{font-size:.75rem;color:var(--t2)}
 
-    /* Loading */
-    .loading{display:flex;align-items:center;justify-content:center;min-height:80vh;flex-direction:column;gap:16px}
-    .spinner{width:32px;height:32px;border:3px solid var(--b1);border-top-color:var(--purple);border-radius:50%;animation:spin .7s linear infinite}
-    @keyframes spin{to{transform:rotate(360deg)}}
+    /* Logo */
+    .nav-logo {
+      padding: var(--s4) var(--s5);
+      border-bottom: 1px solid var(--b1);
+      display: flex;
+      align-items: center;
+      gap: var(--s3);
+      flex-shrink: 0;
+    }
+    .logo-mark {
+      width: 32px; height: 32px;
+      background: var(--grad);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+    .logo-text {
+      font-family: var(--display);
+      font-size: var(--t-lg);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      background: var(--grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Nav sections */
+    .nav-sections {
+      flex: 1;
+      overflow-y: auto;
+      padding: var(--s4) 0;
+      scrollbar-width: none;
+    }
+    .nav-sections::-webkit-scrollbar { display: none; }
+
+    .nav-section-label {
+      font-size: var(--t-xs);
+      font-weight: 700;
+      color: var(--t3);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: var(--s3) var(--s5) var(--s2);
+      margin-top: var(--s2);
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: var(--s3);
+      padding: var(--s2) var(--s5);
+      margin: 2px var(--s2);
+      border-radius: var(--r-md);
+      cursor: pointer;
+      transition: all 0.18s var(--ease);
+      position: relative;
+      text-decoration: none;
+      color: var(--t2);
+      font-size: var(--t-sm);
+      font-weight: 500;
+    }
+    .nav-item:hover {
+      background: var(--b1);
+      color: var(--t1);
+    }
+    .nav-item.active {
+      background: rgba(127,90,240,0.12);
+      color: var(--t1);
+    }
+    .nav-item.active::before {
+      content: '';
+      position: absolute;
+      left: -8px; top: 50%;
+      transform: translateY(-50%);
+      width: 3px;
+      height: 60%;
+      background: var(--grad);
+      border-radius: 0 3px 3px 0;
+    }
+    .nav-icon {
+      width: 20px; height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+    .nav-label { flex: 1; }
+    .nav-badge {
+      background: var(--purple);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: var(--r-full);
+      min-width: 18px;
+      text-align: center;
+    }
+    .nav-badge.green { background: var(--green); }
+
+    /* User card at bottom */
+    .nav-user-card {
+      padding: var(--s3) var(--s4);
+      border-top: 1px solid var(--b1);
+      display: flex;
+      align-items: center;
+      gap: var(--s3);
+      flex-shrink: 0;
+    }
+    .user-av {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: var(--grad);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .user-av img { width: 100%; height: 100%; object-fit: cover; }
+    .user-info { flex: 1; min-width: 0; }
+    .user-name {
+      font-size: var(--t-sm);
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .user-snap {
+      font-size: var(--t-xs);
+      color: var(--t3);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 1px;
+    }
+    .snap-dot {
+      width: 6px; height: 6px;
+      background: var(--grad);
+      border-radius: 50%;
+    }
+    .btn-logout-mini {
+      width: 30px; height: 30px;
+      border-radius: var(--r-sm);
+      background: transparent;
+      border: 1px solid var(--b1);
+      color: var(--t3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.18s;
+      flex-shrink: 0;
+    }
+    .btn-logout-mini:hover { border-color: var(--b2); color: var(--t1); }
+
+    /* ═══════════════════════════════════════
+       HEADER
+    ═══════════════════════════════════════ */
+    .header {
+      grid-area: header;
+      background: rgba(8,8,16,0.8);
+      backdrop-filter: blur(24px);
+      border-bottom: 1px solid var(--b1);
+      display: flex;
+      align-items: center;
+      gap: var(--s4);
+      padding: 0 var(--s6);
+      z-index: 40;
+    }
+    .header-title {
+      font-family: var(--display);
+      font-size: var(--t-md);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      flex: 1;
+    }
+    .header-search {
+      display: flex;
+      align-items: center;
+      gap: var(--s2);
+      background: var(--raised);
+      border: 1px solid var(--b1);
+      border-radius: var(--r-full);
+      padding: var(--s2) var(--s4);
+      transition: all 0.2s;
+    }
+    .header-search:focus-within {
+      border-color: var(--b-purple);
+      box-shadow: 0 0 0 3px rgba(127,90,240,0.1);
+    }
+    .header-search input {
+      background: transparent;
+      border: none;
+      outline: none;
+      font-family: var(--body);
+      font-size: var(--t-sm);
+      color: var(--t1);
+      width: 180px;
+    }
+    .header-search input::placeholder { color: var(--t3); }
+    .search-ico { color: var(--t3); font-size: 14px; }
+
+    .header-actions { display: flex; align-items: center; gap: var(--s2); }
+    .icon-btn {
+      width: 36px; height: 36px;
+      border-radius: var(--r-sm);
+      background: transparent;
+      border: 1px solid var(--b1);
+      color: var(--t2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.18s;
+      position: relative;
+    }
+    .icon-btn:hover { border-color: var(--b2); color: var(--t1); background: var(--b1); }
+    .notif-dot {
+      position: absolute;
+      top: 7px; right: 7px;
+      width: 6px; height: 6px;
+      background: var(--pink);
+      border-radius: 50%;
+      border: 1.5px solid var(--surface);
+    }
+
+    /* ═══════════════════════════════════════
+       MAIN CONTENT
+    ═══════════════════════════════════════ */
+    .main-content {
+      grid-area: main;
+      overflow-y: auto;
+      background: var(--bg);
+      position: relative;
+    }
+
+    /* Scrollable inner */
+    .content-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: var(--s6) var(--s6) var(--s8);
+    }
+
+    /* ── Welcome Row ── */
+    .welcome-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--s6);
+      gap: var(--s4);
+      flex-wrap: wrap;
+    }
+    .welcome-greeting {
+      font-size: var(--t-xs);
+      font-weight: 700;
+      color: var(--green);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .welcome-title {
+      font-family: var(--display);
+      font-size: var(--t-3xl);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1.05;
+    }
+    .welcome-title .hl {
+      background: var(--grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .welcome-actions { display: flex; gap: var(--s3); align-items: center; }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--s2);
+      padding: var(--s2) var(--s5);
+      background: var(--grad);
+      border: none;
+      border-radius: var(--r-full);
+      color: #fff;
+      font-family: var(--body);
+      font-size: var(--t-sm);
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(127,90,240,0.35);
+      transition: all 0.22s var(--ease);
+    }
+    .btn-primary:hover { box-shadow: 0 6px 28px rgba(127,90,240,0.5); transform: translateY(-1px); }
+    .btn-outline {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--s2);
+      padding: var(--s2) var(--s5);
+      background: transparent;
+      border: 1px solid var(--b2);
+      border-radius: var(--r-full);
+      color: var(--t1);
+      font-family: var(--body);
+      font-size: var(--t-sm);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+    .btn-outline:hover { border-color: var(--b-purple); background: var(--b1); }
+
+    /* ── Stats Grid ── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--s3);
+      margin-bottom: var(--s6);
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--b1);
+      border-radius: var(--r-lg);
+      padding: var(--s4);
+      transition: all 0.25s var(--ease);
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+    .stat-card:hover { border-color: var(--b2); transform: translateY(-3px); box-shadow: 0 12px 40px rgba(0,0,0,0.4); }
+    .stat-card:hover::before { opacity: 1; }
+    .stat-card.purple::before { background: var(--grad); }
+    .stat-card.green::before  { background: linear-gradient(90deg, var(--green), #3de8a0); }
+    .stat-card.pink::before   { background: linear-gradient(90deg, var(--pink), #f472b6); }
+    .stat-card.gold::before   { background: linear-gradient(90deg, var(--gold), #fb5607); }
+
+    .stat-ico {
+      width: 38px; height: 38px;
+      border-radius: var(--r-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      margin-bottom: var(--s3);
+    }
+    .ic-purple { background: rgba(127,90,240,0.15); }
+    .ic-green  { background: rgba(44,182,125,0.15); }
+    .ic-pink   { background: rgba(229,49,112,0.15); }
+    .ic-gold   { background: rgba(255,215,0,0.15); }
+
+    .stat-label {
+      font-size: var(--t-xs);
+      font-weight: 700;
+      color: var(--t3);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 4px;
+    }
+    .stat-value {
+      font-family: var(--display);
+      font-size: var(--t-2xl);
+      font-weight: 800;
+      line-height: 1;
+      background: var(--grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .stat-sub {
+      font-size: var(--t-xs);
+      color: var(--t3);
+      margin-top: 4px;
+    }
+    .stat-trend {
+      font-size: var(--t-xs);
+      font-weight: 700;
+      margin-top: 4px;
+    }
+    .trend-up   { color: var(--green); }
+    .trend-down { color: var(--pink); }
+
+    /* ── Two-column layout ── */
+    .content-cols {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: var(--s5);
+    }
+
+    /* ── Section headings ── */
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--s4);
+    }
+    .section-title {
+      font-family: var(--display);
+      font-size: var(--t-md);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .section-link {
+      font-size: var(--t-xs);
+      font-weight: 600;
+      color: var(--purple);
+      cursor: pointer;
+      transition: color 0.15s;
+    }
+    .section-link:hover { color: #a78bfa; }
+
+    /* ── Quick Actions Grid ── */
+    .quick-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--s3);
+      margin-bottom: var(--s6);
+    }
+    .action-card {
+      background: var(--surface);
+      border: 1px solid var(--b1);
+      border-radius: var(--r-lg);
+      padding: var(--s4);
+      display: flex;
+      align-items: center;
+      gap: var(--s3);
+      cursor: pointer;
+      transition: all 0.22s var(--ease);
+      text-align: left;
+      color: var(--t1);
+    }
+    .action-card:hover {
+      border-color: var(--b-purple);
+      background: rgba(127,90,240,0.04);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(127,90,240,0.12);
+    }
+    .action-ico {
+      width: 46px; height: 46px;
+      border-radius: var(--r-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+    .action-name { font-weight: 700; font-size: var(--t-sm); margin-bottom: 3px; }
+    .action-desc { font-size: var(--t-xs); color: var(--t2); line-height: 1.5; }
+
+    /* ── Activity Feed ── */
+    .feed { display: flex; flex-direction: column; gap: var(--s2); }
+    .feed-item {
+      display: flex;
+      align-items: center;
+      gap: var(--s3);
+      padding: var(--s3) var(--s4);
+      background: var(--surface);
+      border: 1px solid var(--b1);
+      border-radius: var(--r-md);
+      transition: border-color 0.18s;
+      animation: fadeSlide 0.4s var(--ease) both;
+    }
+    .feed-item:nth-child(2) { animation-delay: 0.05s; }
+    .feed-item:nth-child(3) { animation-delay: 0.1s; }
+    .feed-item:nth-child(4) { animation-delay: 0.15s; }
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateX(-8px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    .feed-item:hover { border-color: var(--b2); }
+    .feed-av {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+    .feed-body { flex: 1; min-width: 0; }
+    .feed-text {
+      font-size: var(--t-sm);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .feed-text b { font-weight: 600; }
+    .feed-time { font-size: var(--t-xs); color: var(--t3); margin-top: 2px; }
+    .feed-chip {
+      font-size: var(--t-xs);
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: var(--r-full);
+      border: 1px solid;
+      white-space: nowrap;
+    }
+    .chip-purple { background: rgba(127,90,240,0.12); color: #a78bfa; border-color: rgba(127,90,240,0.22); }
+    .chip-green  { background: rgba(44,182,125,0.12);  color: #3de8a0; border-color: rgba(44,182,125,0.22); }
+    .chip-gold   { background: rgba(255,215,0,0.12);   color: #fbbf24; border-color: rgba(255,215,0,0.22); }
+    .chip-pink   { background: rgba(229,49,112,0.12);  color: #f472b6; border-color: rgba(229,49,112,0.22); }
+
+    /* ── RIGHT SIDEBAR Widgets ── */
+    .right-widgets { display: flex; flex-direction: column; gap: var(--s4); }
+
+    .widget {
+      background: var(--surface);
+      border: 1px solid var(--b1);
+      border-radius: var(--r-lg);
+      padding: var(--s4);
+    }
+    .widget-title {
+      font-family: var(--display);
+      font-size: var(--t-sm);
+      font-weight: 700;
+      margin-bottom: var(--s4);
+      letter-spacing: -0.01em;
+    }
+
+    /* Bond Progress Widget */
+    .bond-info {
+      display: flex;
+      align-items: center;
+      gap: var(--s3);
+      margin-bottom: var(--s3);
+    }
+    .bond-badge {
+      width: 44px; height: 44px;
+      border-radius: var(--r-md);
+      background: rgba(127,90,240,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+    .bond-name {
+      font-weight: 700;
+      font-size: var(--t-sm);
+      margin-bottom: 2px;
+    }
+    .bond-pts { font-size: var(--t-xs); color: var(--t2); }
+    .bond-pts b { color: var(--t1); font-weight: 700; }
+    .progress-bar {
+      height: 5px;
+      background: var(--raised);
+      border-radius: var(--r-full);
+      overflow: hidden;
+      margin-bottom: var(--s2);
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--grad);
+      border-radius: var(--r-full);
+      transition: width 1.2s var(--ease);
+    }
+    .progress-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: var(--t-xs);
+      color: var(--t3);
+    }
+
+    /* Live Rooms Widget */
+    .rooms-list { display: flex; flex-direction: column; gap: var(--s2); }
+    .room-row {
+      display: flex;
+      align-items: center;
+      gap: var(--s3);
+      padding: var(--s2) var(--s3);
+      border-radius: var(--r-md);
+      cursor: pointer;
+      transition: background 0.18s;
+    }
+    .room-row:hover { background: var(--b1); }
+    .room-emoji-sm { font-size: 20px; width: 30px; text-align: center; flex-shrink: 0; }
+    .room-info-sm { flex: 1; min-width: 0; }
+    .room-name-sm { font-size: var(--t-sm); font-weight: 600; }
+    .room-count {
+      font-size: var(--t-xs);
+      color: var(--t3);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 1px;
+    }
+    .live-dot-sm {
+      width: 5px; height: 5px;
+      background: #22c55e;
+      border-radius: 50%;
+      animation: blink 1.5s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+    .room-mult-sm {
+      font-size: var(--t-xs);
+      font-weight: 700;
+      color: var(--purple);
+    }
+
+    /* Daily Challenges Widget */
+    .challenges-list { display: flex; flex-direction: column; gap: var(--s3); }
+    .challenge-row {}
+    .challenge-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 5px;
+    }
+    .challenge-name {
+      font-size: var(--t-xs);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .challenge-pts {
+      font-size: var(--t-xs);
+      font-weight: 700;
+      color: var(--green);
+    }
+    .chal-bar {
+      height: 4px;
+      background: var(--raised);
+      border-radius: var(--r-full);
+      overflow: hidden;
+    }
+    .chal-fill {
+      height: 100%;
+      border-radius: var(--r-full);
+      transition: width 1s var(--ease);
+    }
+    .cf-purple { background: var(--purple); }
+    .cf-green  { background: var(--green); }
+    .cf-gold   { background: var(--gold); }
+    .challenge-sub {
+      font-size: var(--t-xs);
+      color: var(--t3);
+      margin-top: 3px;
+    }
+
+    /* ═══════════════════════════════════════
+       MINI PLAYER BAR
+    ═══════════════════════════════════════ */
+    .player-bar {
+      grid-area: player;
+      background: var(--surface);
+      border-top: 1px solid var(--b1);
+      display: flex;
+      align-items: center;
+      gap: var(--s4);
+      padding: 0 var(--s6);
+      position: relative;
+      z-index: 40;
+    }
+
+    /* Left: Song info */
+    .player-song {
+      display: flex;
+      align-items: center;
+      gap: var(--s3);
+      flex: 0 0 280px;
+      min-width: 0;
+    }
+    .player-thumb {
+      width: 48px; height: 48px;
+      border-radius: var(--r-sm);
+      background: linear-gradient(135deg, #0d0221, #7f5af0);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .vinyl-mini {
+      position: absolute;
+      inset: 0;
+      background: conic-gradient(#0a0a14 0deg, #1a1a30 60deg, #533483 120deg, #0a0a14 180deg, #1a1a30 240deg, #533483 300deg, #0a0a14 360deg);
+      animation: spin 6s linear infinite;
+      border-radius: 50%;
+      transform-origin: center;
+      width: 48px; height: 48px;
+    }
+    .vinyl-center {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      width: 14px; height: 14px;
+      background: var(--surface);
+      border-radius: 50%;
+      z-index: 1;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .song-meta { min-width: 0; }
+    .song-title {
+      font-size: var(--t-sm);
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .song-artist { font-size: var(--t-xs); color: var(--t2); margin-top: 2px; }
+    .sync-pill-mini {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(44,182,125,0.12);
+      border: 1px solid rgba(44,182,125,0.22);
+      border-radius: var(--r-full);
+      padding: 2px 8px;
+      font-size: 10px;
+      font-weight: 700;
+      color: #3de8a0;
+      margin-top: 3px;
+      width: fit-content;
+    }
+    .sdot {
+      width: 5px; height: 5px;
+      background: var(--green);
+      border-radius: 50%;
+      animation: blink 1.4s ease-in-out infinite;
+    }
+
+    /* Center: Controls */
+    .player-controls {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--s2);
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    .ctrl-btns {
+      display: flex;
+      align-items: center;
+      gap: var(--s4);
+    }
+    .ctrl-btn {
+      background: none;
+      border: none;
+      color: var(--t2);
+      cursor: pointer;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      transition: color 0.15s, transform 0.15s;
+    }
+    .ctrl-btn:hover { color: var(--t1); transform: scale(1.1); }
+    .ctrl-play {
+      width: 40px; height: 40px;
+      background: var(--grad);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 3px 15px rgba(127,90,240,0.45);
+      transition: transform 0.18s var(--bounce), box-shadow 0.18s;
+    }
+    .ctrl-play:hover { transform: scale(1.08); box-shadow: 0 5px 22px rgba(127,90,240,0.6); }
+
+    .progress-row {
+      display: flex;
+      align-items: center;
+      gap: var(--s3);
+      width: 100%;
+    }
+    .time { font-size: var(--t-xs); color: var(--t3); width: 28px; text-align: center; }
+    .prog-track {
+      flex: 1;
+      height: 3px;
+      background: var(--raised);
+      border-radius: 3px;
+      cursor: pointer;
+      position: relative;
+    }
+    .prog-fill {
+      height: 100%;
+      width: 38%;
+      background: var(--grad);
+      border-radius: 3px;
+      position: relative;
+    }
+    .prog-fill::after {
+      content: '';
+      position: absolute;
+      right: -4px; top: -3px;
+      width: 9px; height: 9px;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 0 0 6px rgba(127,90,240,0.7);
+    }
+
+    /* Right: Volume + extra */
+    .player-right {
+      flex: 0 0 280px;
+      display: flex;
+      align-items: center;
+      gap: var(--s3);
+      justify-content: flex-end;
+    }
+    .quality-badge {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: var(--t-xs);
+      color: var(--t3);
+    }
+    .q-dot {
+      width: 6px; height: 6px;
+      background: var(--green);
+      border-radius: 50%;
+      animation: blink 2s ease-in-out infinite;
+    }
+
+    /* ═══════════════════════════════════════
+       MOBILE BOTTOM NAV
+    ═══════════════════════════════════════ */
+    .mobile-nav {
+      display: none;
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      height: var(--mobile-nav);
+      background: rgba(14,14,26,0.95);
+      backdrop-filter: blur(24px);
+      border-top: 1px solid var(--b1);
+      z-index: 200;
+      align-items: center;
+      justify-content: space-around;
+      padding: 0 var(--s4);
+    }
+    .mob-nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      padding: 8px 12px;
+      border-radius: var(--r-md);
+      transition: all 0.18s;
+      color: var(--t3);
+      font-size: var(--t-xs);
+      font-weight: 600;
+      position: relative;
+    }
+    .mob-nav-item:hover { color: var(--t1); }
+    .mob-nav-item.active { color: var(--purple); }
+    .mob-icon { font-size: 22px; }
+    .mob-nav-item.center-btn {
+      background: var(--grad);
+      color: #fff;
+      border-radius: var(--r-full);
+      width: 54px; height: 54px;
+      margin-top: -18px;
+      padding: 0;
+      justify-content: center;
+      box-shadow: 0 4px 20px rgba(127,90,240,0.5);
+    }
+    .mob-nav-item.center-btn .mob-icon { font-size: 24px; }
+    .mob-badge {
+      position: absolute;
+      top: 4px; right: 4px;
+      width: 8px; height: 8px;
+      background: var(--pink);
+      border-radius: 50%;
+      border: 1.5px solid var(--surface);
+    }
+
+    /* ═══════════════════════════════════════
+       LOADING SCREEN
+    ═══════════════════════════════════════ */
+    .loading-screen {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: var(--s4);
+      z-index: 9999;
+      transition: opacity 0.4s, visibility 0.4s;
+    }
+    .loading-screen.hidden { opacity: 0; visibility: hidden; }
+    .loading-logo {
+      font-family: var(--display);
+      font-size: var(--t-2xl);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      background: var(--grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .spinner {
+      width: 28px; height: 28px;
+      border: 2.5px solid var(--b1);
+      border-top-color: var(--purple);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    /* ═══════════════════════════════════════
+       TOAST
+    ═══════════════════════════════════════ */
+    .toast-wrap {
+      position: fixed;
+      bottom: calc(var(--player-h) + 16px);
+      right: var(--s5);
+      z-index: 500;
+      display: flex;
+      flex-direction: column;
+      gap: var(--s2);
+      pointer-events: none;
+    }
+    .toast {
+      background: var(--raised);
+      border: 1px solid var(--b2);
+      border-radius: var(--r-md);
+      padding: var(--s3) var(--s4);
+      font-size: var(--t-sm);
+      display: flex;
+      align-items: center;
+      gap: var(--s2);
+      animation: toastIn 0.35s var(--bounce) forwards;
+      pointer-events: auto;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+    }
+    .toast.success { border-color: rgba(44,182,125,0.3); }
+    .toast.error   { border-color: rgba(229,49,112,0.3); }
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(12px) scale(0.95); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* ═══════════════════════════════════════
+       RESPONSIVE
+    ═══════════════════════════════════════ */
+    @media (max-width: 900px) {
+      .app-shell {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+          "header"
+          "main"
+          "player";
+        grid-template-rows: var(--header-h) 1fr var(--player-h);
+      }
+      .sidebar { display: none; }
+      .mobile-nav { display: flex; }
+      .player-right { display: none; }
+      .player-song { flex: 0 0 auto; }
+      .main-content { padding-bottom: var(--mobile-nav); }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .content-cols { grid-template-columns: 1fr; }
+      .right-widgets { display: none; }
+      .toast-wrap { bottom: calc(var(--player-h) + var(--mobile-nav) + 10px); }
+    }
+
+    @media (max-width: 580px) {
+      .welcome-row { flex-direction: column; align-items: flex-start; }
+      .progress-row .time { display: none; }
+      .header-search { display: none; }
+    }
   </style>
 </head>
 <body>
 
-<nav class="nav">
-  <a href="/" class="nav-logo">Syncify</a>
-  <div class="nav-right">
-    <div class="nav-user">
-      <div class="nav-av" id="navAv">?</div>
-      <span id="navName">Loading...</span>
+<!-- ═══════════════════════════════ LOADING ══ -->
+<div class="loading-screen" id="loadingScreen">
+  <div class="loading-logo">Syncify</div>
+  <div class="spinner"></div>
+</div>
+
+<!-- ═══════════════════════════════ TOAST CONTAINER ══ -->
+<div class="toast-wrap" id="toastWrap"></div>
+
+<!-- ═══════════════════════════════════════════════
+     APP SHELL
+═══════════════════════════════════════════════ -->
+<div class="app-shell" id="appShell" style="display:none">
+
+  <!-- ══════════════ SIDEBAR ══════════════ -->
+  <aside class="sidebar">
+    <div class="nav-logo">
+      <div class="logo-mark">🎵</div>
+      <span class="logo-text">Syncify</span>
     </div>
-    <button class="btn-logout" id="btnLogout">Log out</button>
+
+    <nav class="nav-sections">
+
+      <!-- Main -->
+      <div class="nav-section-label">Main</div>
+      <a href="/dashboard" class="nav-item active">
+        <span class="nav-icon">🏠</span>
+        <span class="nav-label">Home</span>
+      </a>
+      <a href="/profile" class="nav-item">
+        <span class="nav-icon">👤</span>
+        <span class="nav-label">Profile</span>
+      </a>
+      <a href="/friends" class="nav-item">
+        <span class="nav-icon">👥</span>
+        <span class="nav-label">Friends</span>
+        <span class="nav-badge" id="friendsBadge">3</span>
+      </a>
+      <a href="/chat" class="nav-item">
+        <span class="nav-icon">💬</span>
+        <span class="nav-label">Messages</span>
+        <span class="nav-badge green" id="msgBadge">5</span>
+      </a>
+
+      <!-- Music -->
+      <div class="nav-section-label">Music</div>
+      <a href="/sync" class="nav-item">
+        <span class="nav-icon">🔄</span>
+        <span class="nav-label">Sync Listen</span>
+      </a>
+      <a href="/playlists" class="nav-item">
+        <span class="nav-icon">📋</span>
+        <span class="nav-label">Playlists</span>
+      </a>
+      <a href="/rooms" class="nav-item">
+        <span class="nav-icon">🎭</span>
+        <span class="nav-label">Mood Rooms</span>
+      </a>
+
+      <!-- Discover -->
+      <div class="nav-section-label">Discover</div>
+      <a href="/compatibility" class="nav-item">
+        <span class="nav-icon">🤖</span>
+        <span class="nav-label">AI Compatibility</span>
+      </a>
+      <a href="/timeline" class="nav-item">
+        <span class="nav-icon">🕐</span>
+        <span class="nav-label">Timeline</span>
+      </a>
+      <a href="/challenges" class="nav-item">
+        <span class="nav-icon">⚡</span>
+        <span class="nav-label">Challenges</span>
+      </a>
+
+    </nav>
+
+    <!-- User Card -->
+    <div class="nav-user-card">
+      <div class="user-av" id="sidebarAv">?</div>
+      <div class="user-info">
+        <div class="user-name" id="sidebarName">Loading...</div>
+        <div class="user-snap">
+          <span class="snap-dot"></span>
+          <span id="sidebarSnap">0 snap points</span>
+        </div>
+      </div>
+      <button class="btn-logout-mini" id="btnLogout" title="Log out">↩</button>
+    </div>
+  </aside>
+
+  <!-- ══════════════ HEADER ══════════════ -->
+  <header class="header">
+    <div class="header-title" id="headerTitle">Dashboard</div>
+
+    <div class="header-search">
+      <span class="search-ico">🔍</span>
+      <input type="text" placeholder="Search songs, friends..." />
+    </div>
+
+    <div class="header-actions">
+      <button class="icon-btn" title="Notifications">
+        🔔
+        <span class="notif-dot"></span>
+      </button>
+      <button class="icon-btn" title="Settings">⚙️</button>
+    </div>
+  </header>
+
+  <!-- ══════════════ MAIN CONTENT ══════════════ -->
+  <main class="main-content">
+    <div class="content-inner">
+
+      <!-- Welcome Row -->
+      <div class="welcome-row">
+        <div>
+          <div class="welcome-greeting">🎵 Welcome back</div>
+          <h1 class="welcome-title">Hey, <span class="hl" id="welcomeName">friend</span>!</h1>
+        </div>
+        <div class="welcome-actions">
+          <button class="btn-primary" onclick="showToast('🔄 Sync sessions coming Day 22!', 'success')">
+            🔄 Start Sync
+          </button>
+          <button class="btn-outline" onclick="window.location.href='/friends'">
+            👥 Find Friends
+          </button>
+        </div>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="stats-grid">
+        <div class="stat-card purple">
+          <div class="stat-ico ic-purple">⚡</div>
+          <div class="stat-label">Snap Points</div>
+          <div class="stat-value" id="statSnap">0</div>
+          <div class="stat-sub" id="statBond">New Vibes level</div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-ico ic-green">🔥</div>
+          <div class="stat-label">Day Streak</div>
+          <div class="stat-value" id="statStreak">1</div>
+          <div class="stat-trend trend-up" id="statStreakTrend">↑ Keep it going!</div>
+        </div>
+        <div class="stat-card pink">
+          <div class="stat-ico ic-pink">👥</div>
+          <div class="stat-label">Friends</div>
+          <div class="stat-value" id="statFriends">0</div>
+          <div class="stat-sub">Connected</div>
+        </div>
+        <div class="stat-card gold">
+          <div class="stat-ico ic-gold">🔄</div>
+          <div class="stat-label">Total Syncs</div>
+          <div class="stat-value" id="statSyncs">0</div>
+          <div class="stat-sub">Sessions done</div>
+        </div>
+      </div>
+
+      <!-- 2-Column Content -->
+      <div class="content-cols">
+
+        <!-- LEFT: Actions + Feed -->
+        <div>
+          <!-- Quick Actions -->
+          <div class="section-head">
+            <div class="section-title">Quick Actions</div>
+          </div>
+          <div class="quick-actions" style="margin-bottom: var(--s6)">
+            <button class="action-card" onclick="showToast('🔄 Sync Sessions — Day 22!', 'success')">
+              <div class="action-ico" style="background:rgba(127,90,240,0.15)">🔄</div>
+              <div>
+                <div class="action-name">Start Sync Session</div>
+                <div class="action-desc">Listen in real-time with a friend</div>
+              </div>
+            </button>
+            <button class="action-card" onclick="showToast('🎭 Mood Rooms — Day 36!', 'success')">
+              <div class="action-ico" style="background:rgba(229,49,112,0.15)">🎭</div>
+              <div>
+                <div class="action-name">Join Mood Room</div>
+                <div class="action-desc">Party Mode · 891 listening now</div>
+              </div>
+            </button>
+            <button class="action-card" onclick="window.location.href='/friends'">
+              <div class="action-ico" style="background:rgba(44,182,125,0.15)">👥</div>
+              <div>
+                <div class="action-name">Add Friends</div>
+                <div class="action-desc">Find people to sync with</div>
+              </div>
+            </button>
+            <button class="action-card" onclick="showToast('🤖 AI Bond Score — Day 31!', 'success')">
+              <div class="action-ico" style="background:rgba(255,215,0,0.15)">🤖</div>
+              <div>
+                <div class="action-name">AI Bond Score</div>
+                <div class="action-desc">Check your Soul Sync compatibility</div>
+              </div>
+            </button>
+          </div>
+
+          <!-- Activity Feed -->
+          <div class="section-head">
+            <div class="section-title">Recent Activity</div>
+            <span class="section-link">See all →</span>
+          </div>
+          <div class="feed" id="activityFeed">
+            <div class="feed-item">
+              <div class="feed-av" style="background:rgba(127,90,240,0.15)">🎵</div>
+              <div class="feed-body">
+                <div class="feed-text">Welcome to <b>Syncify</b>! Your music bonding journey starts here.</div>
+                <div class="feed-time">Just now</div>
+              </div>
+              <span class="feed-chip chip-purple">New</span>
+            </div>
+            <div class="feed-item">
+              <div class="feed-av" style="background:rgba(44,182,125,0.15)">⚡</div>
+              <div class="feed-body">
+                <div class="feed-text">You've earned your first <b>snap points</b> by joining!</div>
+                <div class="feed-time">Just now</div>
+              </div>
+              <span class="feed-chip chip-green">+5 pts</span>
+            </div>
+            <div class="feed-item">
+              <div class="feed-av" style="background:rgba(255,215,0,0.15)">🔥</div>
+              <div class="feed-body">
+                <div class="feed-text">Tip: Start a <b>sync session</b> with a friend to earn +15 snap points!</div>
+                <div class="feed-time">Tip</div>
+              </div>
+              <span class="feed-chip chip-gold">Tip</span>
+            </div>
+            <div class="feed-item">
+              <div class="feed-av" style="background:rgba(229,49,112,0.15)">🎭</div>
+              <div class="feed-body">
+                <div class="feed-text"><b>Party Mode</b> room is 🔥 right now — 891 people listening!</div>
+                <div class="feed-time">Live</div>
+              </div>
+              <span class="feed-chip chip-pink">Live</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: Widgets -->
+        <div class="right-widgets">
+
+          <!-- Bond Level Progress -->
+          <div class="widget">
+            <div class="widget-title">Bond Level</div>
+            <div class="bond-info">
+              <div class="bond-badge" id="bondBadge">🎵</div>
+              <div>
+                <div class="bond-name" id="bondName">New Vibes</div>
+                <div class="bond-pts"><b id="bondCurrent">0</b> / <span id="bondNext">100</span> pts to next level</div>
+              </div>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" id="bondProgress" style="width:0%"></div>
+            </div>
+            <div class="progress-labels">
+              <span id="bondLevelName">New Vibes</span>
+              <span id="bondNextLevel">Music Buddies</span>
+            </div>
+          </div>
+
+          <!-- Live Rooms -->
+          <div class="widget">
+            <div class="section-head" style="margin-bottom: var(--s3)">
+              <div class="widget-title" style="margin-bottom:0">Live Rooms</div>
+              <span class="section-link" onclick="window.location.href='/rooms'">Join →</span>
+            </div>
+            <div class="rooms-list">
+              <div class="room-row">
+                <span class="room-emoji-sm">🌊</span>
+                <div class="room-info-sm">
+                  <div class="room-name-sm">Chill Zone</div>
+                  <div class="room-count"><span class="live-dot-sm"></span> 247 listening</div>
+                </div>
+                <span class="room-mult-sm">×1.5</span>
+              </div>
+              <div class="room-row">
+                <span class="room-emoji-sm">🎉</span>
+                <div class="room-info-sm">
+                  <div class="room-name-sm">Party Mode</div>
+                  <div class="room-count"><span class="live-dot-sm"></span> 891 listening</div>
+                </div>
+                <span class="room-mult-sm">×2.0</span>
+              </div>
+              <div class="room-row">
+                <span class="room-emoji-sm">📚</span>
+                <div class="room-info-sm">
+                  <div class="room-name-sm">Study Hours</div>
+                  <div class="room-count"><span class="live-dot-sm"></span> 183 listening</div>
+                </div>
+                <span class="room-mult-sm">×1.3</span>
+              </div>
+              <div class="room-row">
+                <span class="room-emoji-sm">💪</span>
+                <div class="room-info-sm">
+                  <div class="room-name-sm">Gym Energy</div>
+                  <div class="room-count"><span class="live-dot-sm"></span> 412 listening</div>
+                </div>
+                <span class="room-mult-sm">×1.8</span>
+              </div>
+              <div class="room-row">
+                <span class="room-emoji-sm">🌙</span>
+                <div class="room-info-sm">
+                  <div class="room-name-sm">Late Night</div>
+                  <div class="room-count"><span class="live-dot-sm"></span> 334 listening</div>
+                </div>
+                <span class="room-mult-sm">×1.5</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Daily Challenges -->
+          <div class="widget">
+            <div class="section-head" style="margin-bottom: var(--s3)">
+              <div class="widget-title" style="margin-bottom:0">Daily Challenges</div>
+              <span class="section-link" onclick="window.location.href='/challenges'">All →</span>
+            </div>
+            <div class="challenges-list">
+              <div class="challenge-row">
+                <div class="challenge-head">
+                  <span class="challenge-name">🎵 Share 2 songs</span>
+                  <span class="challenge-pts">+20 pts</span>
+                </div>
+                <div class="chal-bar"><div class="chal-fill cf-purple" style="width:0%"></div></div>
+                <div class="challenge-sub">0 / 2 shared today</div>
+              </div>
+              <div class="challenge-row">
+                <div class="challenge-head">
+                  <span class="challenge-name">🔄 Do 1 sync session</span>
+                  <span class="challenge-pts">+30 pts</span>
+                </div>
+                <div class="chal-bar"><div class="chal-fill cf-green" style="width:0%"></div></div>
+                <div class="challenge-sub">0 / 1 completed</div>
+              </div>
+              <div class="challenge-row">
+                <div class="challenge-head">
+                  <span class="challenge-name">💬 Send 10 messages</span>
+                  <span class="challenge-pts">+15 pts</span>
+                </div>
+                <div class="chal-bar"><div class="chal-fill cf-gold" style="width:0%"></div></div>
+                <div class="challenge-sub">0 / 10 sent today</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ══════════════ MINI PLAYER BAR ══════════════ -->
+  <div class="player-bar">
+    <!-- Song Info -->
+    <div class="player-song">
+      <div class="player-thumb">
+        <div class="vinyl-mini"></div>
+        <div class="vinyl-center"></div>
+      </div>
+      <div class="song-meta">
+        <div class="song-title">Midnight Frequency</div>
+        <div class="song-artist">The Resonants · Ambient</div>
+        <div class="sync-pill-mini"><span class="sdot"></span> Synced</div>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="player-controls">
+      <div class="ctrl-btns">
+        <button class="ctrl-btn" title="Previous">⏮</button>
+        <button class="ctrl-play" id="playBtn" title="Play/Pause">⏸</button>
+        <button class="ctrl-btn" title="Next">⏭</button>
+      </div>
+      <div class="progress-row">
+        <span class="time" id="currentTime">1:47</span>
+        <div class="prog-track">
+          <div class="prog-fill" id="progFill"></div>
+        </div>
+        <span class="time" id="totalTime">4:12</span>
+      </div>
+    </div>
+
+    <!-- Right side -->
+    <div class="player-right">
+      <div class="quality-badge">
+        <span class="q-dot"></span>
+        HD · &lt;50ms
+      </div>
+    </div>
   </div>
-</nav>
 
-<div class="main">
-  <!-- Loading state -->
-  <div class="loading" id="loadingState">
-    <div class="spinner"></div>
-    <span style="color:var(--t3);font-size:.85rem">Loading your dashboard...</span>
+</div><!-- /app-shell -->
+
+<!-- ══════════════ MOBILE BOTTOM NAV ══════════════ -->
+<div class="mobile-nav">
+  <div class="mob-nav-item active" onclick="window.location.href='/dashboard'">
+    <span class="mob-icon">🏠</span>
+    <span>Home</span>
   </div>
-
-  <!-- Dashboard content (hidden until auth confirmed) -->
-  <div class="content" id="dashContent" style="display:none">
-
-    <div class="welcome">
-      <div class="welcome-greeting">🎵 Welcome back</div>
-      <h1 class="welcome-title">Hey, <span id="userName">friend</span>!</h1>
-    </div>
-
-    <!-- Auth confirmation -->
-    <div class="auth-card">
-      <div class="auth-ico">✅</div>
-      <div>
-        <div class="auth-label">Authentication working</div>
-        <div class="auth-detail" id="authDetail">Logged in via Firebase + JWT</div>
-      </div>
-    </div>
-
-    <!-- Stats -->
-    <div class="stats">
-      <div class="stat-card">
-        <div class="stat-label">Snap Points</div>
-        <div class="stat-value" id="snapPoints">0</div>
-        <div class="stat-sub">New Vibes level</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Bond Level</div>
-        <div class="stat-value">🎵</div>
-        <div class="stat-sub" id="bondLevel">New Vibes</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Day 6 of 49</div>
-        <div class="stat-value">12%</div>
-        <div class="stat-sub">Build progress</div>
-      </div>
-    </div>
-
-    <!-- Quick actions -->
-    <div class="section-title">Quick Actions</div>
-    <div class="actions">
-      <button class="action-btn" onclick="alert('Coming Day 10 — Sync Sessions!')">
-        <div class="action-ico" style="background:rgba(127,90,240,.15)">🔄</div>
-        <div>
-          <div class="action-name">Start Sync Session</div>
-          <div class="action-desc">Listen in real-time with a friend</div>
-        </div>
-      </button>
-      <button class="action-btn" onclick="alert('Coming Day 12 — Friends System!')">
-        <div class="action-ico" style="background:rgba(44,182,125,.15)">👥</div>
-        <div>
-          <div class="action-name">Add Friends</div>
-          <div class="action-desc">Find people to sync with</div>
-        </div>
-      </button>
-      <button class="action-btn" onclick="alert('Coming Day 15 — Mood Rooms!')">
-        <div class="action-ico" style="background:rgba(229,49,112,.15)">🎭</div>
-        <div>
-          <div class="action-name">Join Mood Room</div>
-          <div class="action-desc">Party Mode · 891 listening now</div>
-        </div>
-      </button>
-      <button class="action-btn" onclick="alert('Coming Day 20 — AI Features!')">
-        <div class="action-ico" style="background:rgba(255,215,0,.15)">🤖</div>
-        <div>
-          <div class="action-name">AI Bond Score</div>
-          <div class="action-desc">Check your Soul Sync compatibility</div>
-        </div>
-      </button>
-    </div>
-
+  <div class="mob-nav-item" onclick="window.location.href='/friends'">
+    <span class="mob-icon">👥</span>
+    <span>Friends</span>
+    <span class="mob-badge"></span>
+  </div>
+  <div class="mob-nav-item center-btn" onclick="showToast('🔄 Sync Sessions — Day 22!','success')">
+    <span class="mob-icon">🔄</span>
+  </div>
+  <div class="mob-nav-item" onclick="window.location.href='/chat'">
+    <span class="mob-icon">💬</span>
+    <span>Chat</span>
+  </div>
+  <div class="mob-nav-item" onclick="window.location.href='/profile'">
+    <span class="mob-icon">👤</span>
+    <span>Profile</span>
   </div>
 </div>
 
+<!-- ══════════════════════════════════════════════════
+     FIREBASE + APP LOGIC
+══════════════════════════════════════════════════ -->
 <script type="module">
-  import { initializeApp }   from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+  import { initializeApp }
+    from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
   import { getAuth, onAuthStateChanged, signOut }
     from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
 
+  // ── Replace with your Firebase config ──
   const firebaseConfig = {
     apiKey: "AIzaSyCHVFod0I0_-fo0O0rShSJLQpe4nyNHwQk",
     authDomain: "syncify-001.firebaseapp.com",
@@ -197,57 +1540,142 @@
   const auth = getAuth(app);
   const $    = id => document.getElementById(id);
 
-  // ── Check auth state ──────────────────────────
+  // ── Bond level calculator ──
+  function getBondLevel(pts) {
+    if (pts >= 1500) return { name: 'Legendary Bond', emoji: '👑', next: null, nextPts: 1500, color: '#ffd700' };
+    if (pts >= 500)  return { name: 'Soul Sync',       emoji: '🔮', next: 'Legendary Bond', nextPts: 1500, color: '#7f5af0' };
+    if (pts >= 100)  return { name: 'Music Buddies',   emoji: '🎶', next: 'Soul Sync',       nextPts: 500,  color: '#2cb67d' };
+    return               { name: 'New Vibes',          emoji: '🎵', next: 'Music Buddies',   nextPts: 100,  color: '#94a1b2' };
+  }
+
+  function updateBondUI(pts) {
+    const level = getBondLevel(pts);
+    $('bondBadge').textContent   = level.emoji;
+    $('bondName').textContent    = level.name;
+    $('bondLevelName').textContent = level.name;
+    $('bondNextLevel').textContent = level.next || '👑 Max Level';
+
+    const prevThreshold = pts >= 1500 ? 1500 : pts >= 500 ? 500 : pts >= 100 ? 100 : 0;
+    const range = level.nextPts - prevThreshold;
+    const earned = pts - prevThreshold;
+    const pct = level.next ? Math.min(100, Math.round((earned / range) * 100)) : 100;
+
+    $('bondCurrent').textContent = pts;
+    $('bondNext').textContent    = level.nextPts;
+    setTimeout(() => {
+      $('bondProgress').style.width = pct + '%';
+    }, 300);
+  }
+
+  // ── Auth state ──
   onAuthStateChanged(auth, async user => {
     if (!user) {
-      // Not logged in — redirect
       window.location.href = '/login';
       return;
     }
 
-    // Show dashboard
-    $('loadingState').style.display = 'none';
-    $('dashContent').style.display  = 'block';
+    // Hide loading, show app
+    $('loadingScreen').classList.add('hidden');
+    $('appShell').style.display = 'grid';
 
-    // Populate nav
-    const initials = (user.displayName || user.email || '?')
-      .split(' ').map(p => p[0]).join('').toUpperCase().slice(0,2);
-    $('navAv').textContent = initials;
-    $('navName').textContent = user.displayName || user.email;
-
-    // Populate dashboard
+    // ── Populate from Firebase user immediately ──
     const firstName = (user.displayName || 'friend').split(' ')[0];
-    $('userName').textContent = firstName;
+    $('welcomeName').textContent = firstName;
 
-    // Try to get user data from backend
+    const initials = (user.displayName || user.email || '?')
+      .split(' ').map(p => p[0]).join('').toUpperCase().slice(0, 2);
+    $('sidebarAv').textContent = initials;
+    $('sidebarName').textContent = user.displayName || user.email;
+
+    if (user.photoURL) {
+      $('sidebarAv').innerHTML = `<img src="${user.photoURL}" alt="avatar">`;
+    }
+
+    // ── Fetch backend data ──
     const jwt = localStorage.getItem('syncify_jwt');
     if (jwt) {
       try {
-        const res = await fetch('/api/auth/me', {
+        // Get user profile
+        const meRes = await fetch('/api/auth/me', {
           headers: { Authorization: `Bearer ${jwt}` }
         });
-        if (res.ok) {
-          const data = await res.json();
-          const u = data.data;
-          $('snapPoints').textContent = u.snap_points || 0;
-          $('bondLevel').textContent  = u.bond_level?.name || 'New Vibes';
-          $('authDetail').textContent = `@${u.username} · JWT + Firebase verified ✓`;
+        if (meRes.ok) {
+          const meData = await meRes.json();
+          const u = meData.data;
+          const pts = u.snap_points || 0;
+
+          $('statSnap').textContent    = pts;
+          $('sidebarSnap').textContent = `${pts} snap points`;
+          $('statBond').textContent    = u.bond_level?.name || 'New Vibes';
+          updateBondUI(pts);
         }
-      } catch { /* backend might be restarting */ }
+
+        // Get full profile stats
+        const profRes = await fetch('/api/users/profile', {
+          headers: { Authorization: `Bearer ${jwt}` }
+        });
+        if (profRes.ok) {
+          const profData = await profRes.json();
+          const stats = profData.stats || {};
+          $('statFriends').textContent = stats.friend_count || 0;
+          $('statSyncs').textContent   = stats.sync_sessions || 0;
+
+          // Update badges
+          if (stats.friend_count > 0) $('friendsBadge').textContent = stats.friend_count;
+        }
+
+      } catch (e) {
+        // Backend might be restarting — that's OK, UI still works
+        console.log('[Syncify] Backend not reachable, using Firebase data');
+      }
     }
 
-    if (user.photoURL) {
-      $('navAv').innerHTML = `<img src="${user.photoURL}" alt="avatar">`;
-    }
+    showToast(`🎵 Welcome back, ${firstName}!`, 'success');
   });
 
-  // ── Logout ────────────────────────────────────
+  // ── Logout ──
   $('btnLogout').addEventListener('click', async () => {
     await signOut(auth);
     localStorage.removeItem('syncify_jwt');
     localStorage.removeItem('syncify_user');
     window.location.href = '/login';
   });
+
+  // ── Player state ──
+  let isPlaying = true;
+  let currentSec = 107; // 1:47
+  const totalSec = 252; // 4:12
+  const fmt = s => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+
+  $('playBtn').addEventListener('click', () => {
+    isPlaying = !isPlaying;
+    $('playBtn').textContent = isPlaying ? '⏸' : '▶️';
+  });
+
+  // Animate progress bar
+  setInterval(() => {
+    if (!isPlaying) return;
+    currentSec = (currentSec + 1) % totalSec;
+    const pct = (currentSec / totalSec) * 100;
+    $('progFill').style.width = pct + '%';
+    $('currentTime').textContent = fmt(currentSec);
+  }, 1000);
+
+  // ── Toast function (global) ──
+  window.showToast = function(msg, type = 'success') {
+    const wrap = $('toastWrap');
+    const t = document.createElement('div');
+    t.className = `toast ${type}`;
+    t.textContent = msg;
+    wrap.appendChild(t);
+    setTimeout(() => {
+      t.style.opacity = '0';
+      t.style.transform = 'translateY(8px)';
+      t.style.transition = 'all 0.3s';
+      setTimeout(() => t.remove(), 300);
+    }, 3500);
+  };
 </script>
+
 </body>
 </html>
