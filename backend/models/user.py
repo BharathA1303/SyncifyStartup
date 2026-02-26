@@ -6,8 +6,7 @@ SQLAlchemy ORM model for the users table.
 from extensions import db
 from utils.helpers import generate_uuid, utcnow, calculate_bond_level
 import uuid
-from flask import Blueprint
-users_bp = Blueprint('users', __name__)
+
 
 
 class User(db.Model):

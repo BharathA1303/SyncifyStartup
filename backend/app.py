@@ -1,34 +1,22 @@
 """
-SYNCIFY Backend — Flask Application Factory
-==========================================
-Production-ready Flask app with SocketIO, PostgreSQL, Redis.
+SYNCIFY Backend — Flask Application Entry Point
 """
 import eventlet
 eventlet.monkey_patch()
 
 import os
-from flask import send_from_directory
-from flask import Flask, jsonify
+from flask import Flask, jsonify, send_from_directory
 from config.settings import get_config
 from extensions import db, socketio, limiter, cors, migrate, init_redis
 
-# Import all models so SQLAlchemy registers them
-import models  # noqa: F401
-
-# Import all Socket event handlers
-import socket_events  # noqa: F401
-
-app = Flask(__name__)
+import models  # noqa
+import socket_events  # noqa
 
 
 def create_app(config=None):
-    """Application factory pattern."""
     app = Flask(__name__)
-
-    # Load config
     app.config.from_object(config or get_config())
 
-    # Initialize extensions
     db.init_app(app)
     migrate.init_app(app, db)
     limiter.init_app(app)
@@ -44,19 +32,12 @@ def create_app(config=None):
         engineio_logger=False,
     )
 
-    # Initialize Redis
     init_redis(app)
-
-    # Register blueprints (API routes)
     register_blueprints(app)
-
-    # Register error handlers
     register_error_handlers(app)
-
-    # Initialize Firebase
+    register_pages(app)
     init_firebase(app)
 
-    # Initialize scheduler (cron jobs)
     if not app.config.get('TESTING'):
         init_scheduler(app)
 
@@ -64,7 +45,6 @@ def create_app(config=None):
 
 
 def register_blueprints(app):
-    """Register all API route blueprints."""
     from api.auth import auth_bp
     from api.users import users_bp
     from api.songs import songs_bp
@@ -76,21 +56,19 @@ def register_blueprints(app):
     from api.challenges import challenges_bp
     from api.ai import ai_bp
 
-    app.register_blueprint(auth_bp, url_prefix='/api/auth')
-    app.register_blueprint(users_bp, url_prefix='/api/users')
-    app.register_blueprint(songs_bp, url_prefix='/api/songs')
-    app.register_blueprint(playlists_bp, url_prefix='/api/playlists')
-    app.register_blueprint(messages_bp, url_prefix='/api/messages')
-    app.register_blueprint(sync_bp, url_prefix='/api/sync')
-    app.register_blueprint(snaps_bp, url_prefix='/api/snaps')
-    app.register_blueprint(rooms_bp, url_prefix='/api/rooms')
-    app.register_blueprint(challenges_bp, url_prefix='/api/challenges')
-    app.register_blueprint(ai_bp, url_prefix='/api/ai')
+    app.register_blueprint(auth_bp,        url_prefix='/api/auth')
+    app.register_blueprint(users_bp,       url_prefix='/api/users')
+    app.register_blueprint(songs_bp,       url_prefix='/api/songs')
+    app.register_blueprint(playlists_bp,   url_prefix='/api/playlists')
+    app.register_blueprint(messages_bp,    url_prefix='/api/messages')
+    app.register_blueprint(sync_bp,        url_prefix='/api/sync')
+    app.register_blueprint(snaps_bp,       url_prefix='/api/snaps')
+    app.register_blueprint(rooms_bp,       url_prefix='/api/rooms')
+    app.register_blueprint(challenges_bp,  url_prefix='/api/challenges')
+    app.register_blueprint(ai_bp,          url_prefix='/api/ai')
 
 
 def register_error_handlers(app):
-    """Register global error handlers."""
-
     @app.errorhandler(400)
     def bad_request(e):
         return jsonify({'error': 'Bad request', 'message': str(e)}), 400
@@ -118,134 +96,62 @@ def register_error_handlers(app):
     @app.route('/api/health')
     def health_check():
         return jsonify({'status': 'ok', 'service': 'syncify-api'}), 200
-    # ============================================
-    # Static File Serving (Development)
-    # ============================================
+
+
+def register_pages(app):
+    """Serve frontend HTML pages in development."""
     import os as _os
 
-    @app.route('/')
-    def serve_index():
-        pages_dir = _os.path.join(
-            _os.path.dirname(_os.path.dirname(__file__)),
-            'frontend', 'pages'
-        )
-        return send_from_directory(pages_dir, 'index.html')
+    def pages_dir():
+        return _os.path.join(_os.path.dirname(_os.path.dirname(__file__)), 'frontend', 'pages')
 
-    @app.route('/login')
-    @app.route('/login.html')
-    def serve_login():
-        pages_dir = _os.path.join(
-            _os.path.dirname(_os.path.dirname(__file__)),
-            'frontend', 'pages'
-        )
-        return send_from_directory(pages_dir, 'login.html')
+    def styles_dir():
+        return _os.path.join(_os.path.dirname(_os.path.dirname(__file__)), 'frontend', 'styles')
 
-    @app.route('/signup')
-    @app.route('/signup.html')
-    def serve_signup():
-        pages_dir = _os.path.join(
-            _os.path.dirname(_os.path.dirname(__file__)),
-            'frontend', 'pages'
-        )
-        return send_from_directory(pages_dir, 'signup.html')
+    def js_dir():
+        return _os.path.join(_os.path.dirname(_os.path.dirname(__file__)), 'frontend', 'js')
 
-    @app.route('/dashboard')
-    @app.route('/dashboard.html')
-    def serve_dashboard():
-        pages_dir = _os.path.join(
-            _os.path.dirname(_os.path.dirname(__file__)),
-            'frontend', 'pages'
-        )
-        return send_from_directory(pages_dir, 'dashboard.html')
+    pages = [
+        ('/', 'index.html'),
+        ('/login', 'login.html'),
+        ('/signup', 'signup.html'),
+        ('/dashboard', 'dashboard.html'),
+        ('/profile', 'profile.html'),
+        ('/friends', 'friends.html'),
+        ('/chat', 'chat.html'),
+        ('/sync', 'sync.html'),
+        ('/rooms', 'rooms.html'),
+        ('/playlists', 'playlists.html'),
+        ('/challenges', 'challenges.html'),
+        ('/timeline', 'timeline.html'),
+        ('/compatibility', 'compatibility.html'),
+    ]
 
-    @app.route('/profile')
-    @app.route('/profile.html')
-    def serve_profile():
-        pages_dir = _os.path.join(
-            _os.path.dirname(_os.path.dirname(__file__)),
-            'frontend', 'pages'
-        )
-        return send_from_directory(pages_dir, 'profile.html')
+    for route, filename in pages:
+        # Create a closure to capture filename correctly
+        def make_view(fn):
+            def view():
+                return send_from_directory(pages_dir(), fn)
+            view.__name__ = 'page_' + fn.replace('.', '_')
+            return view
 
-    @app.route('/friends')
-    @app.route('/friends.html')
-    def serve_friends():
-        pages_dir = _os.path.join(
-            _os.path.dirname(_os.path.dirname(__file__)),
-            'frontend', 'pages'
-        )
-        return send_from_directory(pages_dir, 'friends.html')
+        app.add_url_rule(route, view_func=make_view(filename))
+        app.add_url_rule(route + '.html', view_func=make_view(filename),
+                         endpoint='page_html_' + filename.replace('.', '_'))
 
-    @app.route('/chat')
-    @app.route('/chat.html')
-    def serve_chat():
-        pages_dir = _os.path.join(
-            _os.path.dirname(_os.path.dirname(__file__)),
-            'frontend', 'pages'
-        )
-        return send_from_directory(pages_dir, 'chat.html')
+    @app.route('/static/styles/<path:filename>')
+    def serve_styles(filename):
+        return send_from_directory(styles_dir(), filename)
 
-    @app.route('/sync')
-    @app.route('/sync.html')
-    def serve_sync():
-        pages_dir = _os.path.join(
-            _os.path.dirname(_os.path.dirname(__file__)),
-            'frontend', 'pages'
-        )
-        return send_from_directory(pages_dir, 'sync.html')
-
-    @app.route('/rooms')
-    @app.route('/rooms.html')
-    def serve_rooms():
-        pages_dir = _os.path.join(
-            _os.path.dirname(_os.path.dirname(__file__)),
-            'frontend', 'pages'
-        )
-        return send_from_directory(pages_dir, 'rooms.html')
-
-    @app.route('/playlists')
-    @app.route('/playlists.html')
-    def serve_playlists():
-        pages_dir = _os.path.join(
-            _os.path.dirname(_os.path.dirname(__file__)),
-            'frontend', 'pages'
-        )
-        return send_from_directory(pages_dir, 'playlists.html')
-
-    @app.route('/challenges')
-    @app.route('/challenges.html')
-    def serve_challenges():
-        pages_dir = _os.path.join(
-            _os.path.dirname(_os.path.dirname(__file__)),
-            'frontend', 'pages'
-        )
-        return send_from_directory(pages_dir, 'challenges.html')
-
-    @app.route('/timeline')
-    @app.route('/timeline.html')
-    def serve_timeline():
-        pages_dir = _os.path.join(
-            _os.path.dirname(_os.path.dirname(__file__)),
-            'frontend', 'pages'
-        )
-        return send_from_directory(pages_dir, 'timeline.html')
-
-    @app.route('/compatibility')
-    @app.route('/compatibility.html')
-    def serve_compatibility():
-        pages_dir = _os.path.join(
-            _os.path.dirname(_os.path.dirname(__file__)),
-            'frontend', 'pages'
-        )
-        return send_from_directory(pages_dir, 'compatibility.html')
+    @app.route('/static/js/<path:filename>')
+    def serve_js(filename):
+        return send_from_directory(js_dir(), filename)
 
 
 def init_firebase(app):
-    """Initialize Firebase Admin SDK."""
     try:
         import firebase_admin
         from firebase_admin import credentials
-        import json
 
         cred_dict = {
             "type": "service_account",
@@ -269,7 +175,6 @@ def init_firebase(app):
 
 
 def init_scheduler(app):
-    """Initialize APScheduler for cron jobs."""
     try:
         from services.scheduler import start_scheduler
         start_scheduler(app)
@@ -277,43 +182,7 @@ def init_scheduler(app):
     except Exception as e:
         app.logger.warning(f"⚠️  Scheduler not started: {e}")
 
-# ============================================
-# Static File Serving (Development)
-# ============================================
-import os as _os
 
-@app.route('/')
-def serve_index():
-    pages_dir = _os.path.join(_os.path.dirname(_os.path.dirname(__file__)), 'frontend', 'pages')
-    return send_from_directory(pages_dir, 'index.html')
-
-@app.route('/login')
-def serve_login():
-    pages_dir = _os.path.join(_os.path.dirname(_os.path.dirname(__file__)), 'frontend', 'pages')
-    return send_from_directory(pages_dir, 'login.html')
-
-@app.route('/signup')
-def serve_signup():
-    pages_dir = _os.path.join(_os.path.dirname(_os.path.dirname(__file__)), 'frontend', 'pages')
-    return send_from_directory(pages_dir, 'signup.html')
-
-@app.route('/dashboard')
-def serve_dashboard():
-    pages_dir = _os.path.join(_os.path.dirname(_os.path.dirname(__file__)), 'frontend', 'pages')
-    return send_from_directory(pages_dir, 'dashboard.html')
-
-@app.route('/static/styles/<path:filename>')
-def serve_styles(filename):
-    styles_dir = _os.path.join(_os.path.dirname(_os.path.dirname(__file__)), 'frontend', 'styles')
-    return send_from_directory(styles_dir, filename)
-
-@app.route('/static/js/<path:filename>')
-def serve_js(filename):
-    js_dir = _os.path.join(_os.path.dirname(_os.path.dirname(__file__)), 'frontend', 'js')
-    return send_from_directory(js_dir, filename)
-# ============================================
-# Entry Point
-# ============================================
 if __name__ == '__main__':
     app = create_app()
     socketio.run(
@@ -321,5 +190,5 @@ if __name__ == '__main__':
         host='0.0.0.0',
         port=5000,
         debug=True,
-        use_reloader=False  # Required for eventlet
+        use_reloader=False
     )
