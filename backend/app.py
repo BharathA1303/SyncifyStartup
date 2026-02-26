@@ -6,6 +6,8 @@ Production-ready Flask app with SocketIO, PostgreSQL, Redis.
 import eventlet
 eventlet.monkey_patch()
 
+import os
+from flask import send_from_directory
 from flask import Flask, jsonify
 from config.settings import get_config
 from extensions import db, socketio, limiter, cors, migrate, init_redis
@@ -15,6 +17,8 @@ import models  # noqa: F401
 
 # Import all Socket event handlers
 import socket_events  # noqa: F401
+
+app = Flask(__name__)
 
 
 def create_app(config=None):
@@ -114,6 +118,126 @@ def register_error_handlers(app):
     @app.route('/api/health')
     def health_check():
         return jsonify({'status': 'ok', 'service': 'syncify-api'}), 200
+    # ============================================
+    # Static File Serving (Development)
+    # ============================================
+    import os as _os
+
+    @app.route('/')
+    def serve_index():
+        pages_dir = _os.path.join(
+            _os.path.dirname(_os.path.dirname(__file__)),
+            'frontend', 'pages'
+        )
+        return send_from_directory(pages_dir, 'index.html')
+
+    @app.route('/login')
+    @app.route('/login.html')
+    def serve_login():
+        pages_dir = _os.path.join(
+            _os.path.dirname(_os.path.dirname(__file__)),
+            'frontend', 'pages'
+        )
+        return send_from_directory(pages_dir, 'login.html')
+
+    @app.route('/signup')
+    @app.route('/signup.html')
+    def serve_signup():
+        pages_dir = _os.path.join(
+            _os.path.dirname(_os.path.dirname(__file__)),
+            'frontend', 'pages'
+        )
+        return send_from_directory(pages_dir, 'signup.html')
+
+    @app.route('/dashboard')
+    @app.route('/dashboard.html')
+    def serve_dashboard():
+        pages_dir = _os.path.join(
+            _os.path.dirname(_os.path.dirname(__file__)),
+            'frontend', 'pages'
+        )
+        return send_from_directory(pages_dir, 'dashboard.html')
+
+    @app.route('/profile')
+    @app.route('/profile.html')
+    def serve_profile():
+        pages_dir = _os.path.join(
+            _os.path.dirname(_os.path.dirname(__file__)),
+            'frontend', 'pages'
+        )
+        return send_from_directory(pages_dir, 'profile.html')
+
+    @app.route('/friends')
+    @app.route('/friends.html')
+    def serve_friends():
+        pages_dir = _os.path.join(
+            _os.path.dirname(_os.path.dirname(__file__)),
+            'frontend', 'pages'
+        )
+        return send_from_directory(pages_dir, 'friends.html')
+
+    @app.route('/chat')
+    @app.route('/chat.html')
+    def serve_chat():
+        pages_dir = _os.path.join(
+            _os.path.dirname(_os.path.dirname(__file__)),
+            'frontend', 'pages'
+        )
+        return send_from_directory(pages_dir, 'chat.html')
+
+    @app.route('/sync')
+    @app.route('/sync.html')
+    def serve_sync():
+        pages_dir = _os.path.join(
+            _os.path.dirname(_os.path.dirname(__file__)),
+            'frontend', 'pages'
+        )
+        return send_from_directory(pages_dir, 'sync.html')
+
+    @app.route('/rooms')
+    @app.route('/rooms.html')
+    def serve_rooms():
+        pages_dir = _os.path.join(
+            _os.path.dirname(_os.path.dirname(__file__)),
+            'frontend', 'pages'
+        )
+        return send_from_directory(pages_dir, 'rooms.html')
+
+    @app.route('/playlists')
+    @app.route('/playlists.html')
+    def serve_playlists():
+        pages_dir = _os.path.join(
+            _os.path.dirname(_os.path.dirname(__file__)),
+            'frontend', 'pages'
+        )
+        return send_from_directory(pages_dir, 'playlists.html')
+
+    @app.route('/challenges')
+    @app.route('/challenges.html')
+    def serve_challenges():
+        pages_dir = _os.path.join(
+            _os.path.dirname(_os.path.dirname(__file__)),
+            'frontend', 'pages'
+        )
+        return send_from_directory(pages_dir, 'challenges.html')
+
+    @app.route('/timeline')
+    @app.route('/timeline.html')
+    def serve_timeline():
+        pages_dir = _os.path.join(
+            _os.path.dirname(_os.path.dirname(__file__)),
+            'frontend', 'pages'
+        )
+        return send_from_directory(pages_dir, 'timeline.html')
+
+    @app.route('/compatibility')
+    @app.route('/compatibility.html')
+    def serve_compatibility():
+        pages_dir = _os.path.join(
+            _os.path.dirname(_os.path.dirname(__file__)),
+            'frontend', 'pages'
+        )
+        return send_from_directory(pages_dir, 'compatibility.html')
 
 
 def init_firebase(app):
@@ -153,7 +277,40 @@ def init_scheduler(app):
     except Exception as e:
         app.logger.warning(f"⚠️  Scheduler not started: {e}")
 
+# ============================================
+# Static File Serving (Development)
+# ============================================
+import os as _os
 
+@app.route('/')
+def serve_index():
+    pages_dir = _os.path.join(_os.path.dirname(_os.path.dirname(__file__)), 'frontend', 'pages')
+    return send_from_directory(pages_dir, 'index.html')
+
+@app.route('/login')
+def serve_login():
+    pages_dir = _os.path.join(_os.path.dirname(_os.path.dirname(__file__)), 'frontend', 'pages')
+    return send_from_directory(pages_dir, 'login.html')
+
+@app.route('/signup')
+def serve_signup():
+    pages_dir = _os.path.join(_os.path.dirname(_os.path.dirname(__file__)), 'frontend', 'pages')
+    return send_from_directory(pages_dir, 'signup.html')
+
+@app.route('/dashboard')
+def serve_dashboard():
+    pages_dir = _os.path.join(_os.path.dirname(_os.path.dirname(__file__)), 'frontend', 'pages')
+    return send_from_directory(pages_dir, 'dashboard.html')
+
+@app.route('/static/styles/<path:filename>')
+def serve_styles(filename):
+    styles_dir = _os.path.join(_os.path.dirname(_os.path.dirname(__file__)), 'frontend', 'styles')
+    return send_from_directory(styles_dir, filename)
+
+@app.route('/static/js/<path:filename>')
+def serve_js(filename):
+    js_dir = _os.path.join(_os.path.dirname(_os.path.dirname(__file__)), 'frontend', 'js')
+    return send_from_directory(js_dir, filename)
 # ============================================
 # Entry Point
 # ============================================
